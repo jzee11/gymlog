@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>GymLog</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #13131a;
+    --surface2: #1c1c27;
+    --border: #2a2a3a;
+    --accent: #c8f135;
+    --accent2: #7b61ff;
+    --text: #f0f0f5;
+    --text-muted: #6b6b80;
+    --red: #ff4d4d;
+    --orange: #ff8c42;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    max-width: 480px;
+    margin: 0 auto;
+    padding-bottom: 80px;
+  }
+  h1, h2, h3 { font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.05em; }
+
+  /* HEADER */
+  .app-header {
+    padding: 20px 20px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    background: rgba(10,10,15,0.92);
+    backdrop-filter: blur(12px);
+    z-index: 100;
+    border-bottom: 1px solid var(--border);
+  }
+  .logo { font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 3px; }
+  .logo span { color: var(--accent); }
+  .week-badge {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+
+  /* TABS */
+  .tabs {
+    display: flex;
+    gap: 6px;
+    padding: 16px 20px 8px;
+  }
+  .tab {
+    flex: 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 10px 8px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+  }
+  .tab.active {
+    background: var(--accent);
+    color: #0a0a0f;
+    border-color: var(--accent);
+  }
+
+  /* VIEWS */
+  .view { display: none; padding: 0 20px; }
+  .view.active { display: block; }
+
+  /* TODAY CARD */
+  .today-hero {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 20px;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .today-hero::before {
+    content: '';
+    position: absolute;
+    top: -30px; right: -30px;
+    width: 120px; height: 120px;
+    background: var(--accent);
+    opacity: 0.07;
+    border-radius: 50%;
+  }
+  .today-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 4px; }
+  .today-title { font-size: 38px; color: var(--accent); line-height: 1; margin-bottom: 8px; }
+  .today-meta { font-size: 13px; color: var(--text-muted); }
+  .today-meta strong { color: var(--text); }
+  .start-btn {
+    margin-top: 16px;
+    width: 100%;
+    background: var(--accent);
+    color: #0a0a0f;
+    border: none;
+    border-radius: 14px;
+    padding: 14px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .start-btn:active { transform: scale(0.97); }
+
+  /* REST DAY */
+  .rest-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 30px 20px;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .rest-emoji { font-size: 48px; margin-bottom: 12px; }
+  .rest-card h2 { font-size: 32px; color: var(--text-muted); margin-bottom: 8px; }
+  .rest-card p { font-size: 14px; color: var(--text-muted); }
+
+  /* NEXT UP */
+  .section-title { font-size: 20px; color: var(--text-muted); margin-bottom: 12px; }
+  .next-days { display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; }
+  .next-day-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .next-day-card:active { background: var(--surface2); }
+  .next-day-left { display: flex; flex-direction: column; }
+  .next-day-when { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+  .next-day-name { font-family: 'Bebas Neue', sans-serif; font-size: 22px; color: var(--text); }
+  .next-day-type {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 4px 10px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--accent2);
+  }
+
+  /* WORKOUT SESSION */
+  .session-header {
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: sticky;
+    top: 61px;
+    background: rgba(10,10,15,0.95);
+    backdrop-filter: blur(12px);
+    z-index: 99;
+    border-bottom: 1px solid var(--border);
+    margin: 0 -20px 16px;
+  }
+  .back-btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    width: 36px; height: 36px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    font-size: 18px;
+    color: var(--text);
+    flex-shrink: 0;
+  }
+  .session-title { font-size: 28px; color: var(--accent); flex: 1; }
+  .session-date { font-size: 12px; color: var(--text-muted); }
+  .finish-btn {
+    background: var(--accent);
+    color: #0a0a0f;
+    border: none;
+    border-radius: 10px;
+    padding: 8px 16px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 16px;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  /* EXERCISE CARDS */
+  .exercise-cards { display: flex; flex-direction: column; gap: 12px; padding: 0 20px; }
+  .ex-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    transition: all 0.2s;
+  }
+  .ex-card.done { border-color: var(--accent); opacity: 0.75; }
+  .ex-header {
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+  }
+  .ex-num {
+    width: 28px; height: 28px;
+    background: var(--surface2);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 600; color: var(--text-muted);
+    flex-shrink: 0; margin-right: 12px;
+  }
+  .ex-card.done .ex-num { background: var(--accent); color: #0a0a0f; }
+  .ex-name { font-size: 15px; font-weight: 600; flex: 1; }
+  .ex-last {
+    font-size: 12px; color: var(--text-muted);
+    background: var(--surface2);
+    border-radius: 8px;
+    padding: 3px 8px;
+  }
+  .ex-last span { color: var(--accent); font-weight: 600; }
+  .ex-body { padding: 0 16px 16px; display: none; }
+  .ex-card.open .ex-body { display: block; }
+  .ex-card.open .ex-header { border-bottom: 1px solid var(--border); padding-bottom: 14px; margin-bottom: 0; }
+
+  .sets-table { width: 100%; border-collapse: collapse; margin-bottom: 12px; }
+  .sets-table th { font-size: 11px; color: var(--text-muted); text-align: left; padding: 8px 0 4px; text-transform: uppercase; letter-spacing: 1px; font-weight: 500; }
+  .sets-table td { padding: 6px 0; vertical-align: middle; }
+  .set-num { font-size: 13px; color: var(--text-muted); width: 28px; }
+  .set-input {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    padding: 7px 10px;
+    width: 80px;
+    text-align: center;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .set-input:focus { border-color: var(--accent); }
+  .set-ref { font-size: 12px; color: var(--text-muted); padding-left: 8px; }
+  .set-ref strong { color: var(--accent2); }
+
+  .add-set-btn {
+    width: 100%;
+    background: transparent;
+    border: 1px dashed var(--border);
+    border-radius: 10px;
+    color: var(--text-muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    padding: 8px;
+    cursor: pointer;
+    margin-bottom: 10px;
+    transition: all 0.15s;
+  }
+  .add-set-btn:active { border-color: var(--accent); color: var(--accent); }
+
+  .done-btn {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 16px;
+    letter-spacing: 1px;
+    padding: 10px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .ex-card.done .done-btn { background: var(--accent); color: #0a0a0f; border-color: var(--accent); }
+
+  /* HISTORY */
+  .history-list { display: flex; flex-direction: column; gap: 12px; padding: 8px 0; }
+  .hist-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    cursor: pointer;
+  }
+  .hist-header {
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .hist-left { display: flex; flex-direction: column; }
+  .hist-type { font-family: 'Bebas Neue', sans-serif; font-size: 24px; color: var(--accent); }
+  .hist-date { font-size: 12px; color: var(--text-muted); }
+  .hist-badge {
+    font-size: 12px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 3px 10px;
+    color: var(--text-muted);
+  }
+  .hist-exercises { padding: 0 16px 14px; display: none; }
+  .hist-card.open .hist-exercises { display: block; }
+  .hist-card.open .hist-header { border-bottom: 1px solid var(--border); }
+  .hist-ex-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .hist-ex-row:last-child { border-bottom: none; }
+  .hist-ex-name { color: var(--text); }
+  .hist-ex-stats { color: var(--text-muted); font-size: 12px; }
+  .hist-ex-stats strong { color: var(--accent); }
+
+  /* PLAN */
+  .plan-week { margin-bottom: 24px; }
+  .plan-week-title {
+    font-size: 22px;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .plan-week-title::after {
+    content: ''; flex: 1;
+    height: 1px; background: var(--border);
+  }
+  .plan-days { display: flex; flex-direction: column; gap: 8px; }
+  .plan-day {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+  .plan-day-header {
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+  }
+  .plan-day-name { font-family: 'Bebas Neue', sans-serif; font-size: 18px; }
+  .plan-day-type {
+    font-size: 12px; font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 8px;
+  }
+  .type-legs { background: rgba(255, 77, 77, 0.15); color: var(--red); border: 1px solid rgba(255,77,77,0.3); }
+  .type-push { background: rgba(123, 97, 255, 0.15); color: var(--accent2); border: 1px solid rgba(123,97,255,0.3); }
+  .type-pull { background: rgba(255, 140, 66, 0.15); color: var(--orange); border: 1px solid rgba(255,140,66,0.3); }
+  .plan-day-exercises { padding: 0 16px 12px; display: none; }
+  .plan-day.open .plan-day-exercises { display: block; }
+  .plan-day.open .plan-day-header { border-bottom: 1px solid var(--border); }
+  .plan-ex-item { padding: 5px 0; font-size: 13px; color: var(--text-muted); display: flex; align-items: center; gap: 8px; }
+  .plan-ex-item::before { content: ''; width: 4px; height: 4px; background: var(--accent); border-radius: 50%; flex-shrink: 0; }
+
+  /* EMPTY STATE */
+  .empty-state { text-align: center; padding: 40px 20px; color: var(--text-muted); }
+  .empty-state .emoji { font-size: 48px; margin-bottom: 12px; }
+  .empty-state p { font-size: 14px; }
+
+  /* TOAST */
+  .toast {
+    position: fixed;
+    bottom: 90px;
+    left: 50%; transform: translateX(-50%);
+    background: var(--accent);
+    color: #0a0a0f;
+    font-weight: 700;
+    font-size: 14px;
+    padding: 10px 20px;
+    border-radius: 20px;
+    z-index: 999;
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+    white-space: nowrap;
+  }
+  .toast.show { opacity: 1; }
+
+  /* NAV */
+  .bottom-nav {
+    position: fixed;
+    bottom: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 100%; max-width: 480px;
+    background: rgba(13,13,20,0.96);
+    backdrop-filter: blur(16px);
+    border-top: 1px solid var(--border);
+    display: flex;
+    padding: 10px 20px 20px;
+    gap: 6px;
+    z-index: 200;
+  }
+  .nav-btn {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 8px 4px;
+    border-radius: 12px;
+    transition: all 0.2s;
+  }
+  .nav-btn.active { color: var(--accent); background: rgba(200,241,53,0.08); }
+  .nav-icon { font-size: 22px; }
+</style>
+</head>
+<body>
+
+<div class="app-header">
+  <div class="logo">GYM<span>LOG</span></div>
+  <div class="week-badge" id="weekBadge">Týden 1</div>
+</div>
+
+<!-- VIEWS -->
+<div class="view active" id="view-today">
+  <div style="padding-top:16px;" id="todayContent"></div>
+</div>
+
+<div class="view" id="view-session">
+  <!-- session injected here -->
+</div>
+
+<div class="view" id="view-history">
+  <div style="padding-top:16px;">
+    <div class="section-title">HISTORIE TRÉNINKŮ</div>
+    <div class="history-list" id="historyList"></div>
+  </div>
+</div>
+
+<div class="view" id="view-plan">
+  <div style="padding-top:16px;" id="planContent"></div>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <button class="nav-btn active" onclick="showView('today',this)">
+    <span class="nav-icon">⚡</span>Dnes
+  </button>
+  <button class="nav-btn" onclick="showView('history',this)">
+    <span class="nav-icon">📋</span>Historie
+  </button>
+  <button class="nav-btn" onclick="showView('plan',this)">
+    <span class="nav-icon">📅</span>Plán
+  </button>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================================
+// DATA
+// ============================================================
+const EXERCISES = {
+  LEGS: [
+    'Dřep','Legpress','Zakopávání v leže','Zakopávání v sedě','Výpony na lýtka','Pallofpress'
+  ],
+  PUSH: [
+    'Incline benchpress','Tlaky s jednoručkami v sedě','Kliky na bradlech',
+    'Upažování s jednoručkami','Tricepsové stahování kladky','Cable crunches'
+  ],
+  PULL: [
+    'Shyby','Chest supported row','Pullover','Facepulls',
+    'Barbell curl','Mrtvý tah','Hanging knee raises'
+  ]
+};
+
+// 14-day cycle: [dayOfWeek, workoutType]
+// Týden 1: Po=LEGS, Út=PUSH, Pá=PULL, Ne=LEGS
+// Týden 2 (days 8-14): St=PUSH, Čt=PULL
+// We store as absolute cycle positions
+const CYCLE = [
+  // Týden 1
+  { day: 0, dow: 1, type: 'LEGS', label: 'Pondělí' },  // 0
+  { day: 1, dow: 2, type: 'PUSH', label: 'Úterý' },
+  { day: 2, dow: 5, type: 'PULL', label: 'Pátek' },
+  { day: 3, dow: 0, type: 'LEGS', label: 'Neděle' },
+  // Týden 2
+  { day: 4, dow: 3, type: 'PUSH', label: 'Středa' },
+  { day: 5, dow: 4, type: 'PULL', label: 'Čtvrtek' },
+];
+
+// Storage helpers
+function saveData(key, val) { try { localStorage.setItem(key, JSON.stringify(val)); } catch(e){} }
+function loadData(key, def) { try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : def; } catch(e){ return def; } }
+
+// workoutHistory: array of { date, type, exercises: [{name, sets:[{reps,weight}]}] }
+let history = loadData('gymlog_history', []);
+// cycleStart: ISO date string of when cycle started (Monday of week 1)
+let cycleStart = loadData('gymlog_cycleStart', null);
+
+// Set cycle start if not set - find last Monday
+if (!cycleStart) {
+  const now = new Date();
+  const day = now.getDay(); // 0=Sun
+  const diff = (day === 0 ? 6 : day - 1);
+  const mon = new Date(now);
+  mon.setDate(now.getDate() - diff);
+  mon.setHours(0,0,0,0);
+  cycleStart = mon.toISOString();
+  saveData('gymlog_cycleStart', cycleStart);
+}
+
+function getDateStr(d) {
+  return d.toISOString().split('T')[0];
+}
+
+function getTodayInfo() {
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  const start = new Date(cycleStart);
+  const diffDays = Math.floor((today - start) / 86400000);
+  const weekNum = Math.floor(diffDays / 7) % 2; // 0=week1, 1=week2
+  const dow = today.getDay(); // 0=Sun, 1=Mon...
+
+  // Find workout for today
+  const todayWorkout = CYCLE.find(c => {
+    if (weekNum === 0 && c.day < 4 && c.dow === dow) return true;
+    if (weekNum === 1 && c.day >= 4 && c.dow === dow) return true;
+    return false;
+  });
+
+  return { today, weekNum, todayWorkout, diffDays };
+}
+
+function getLastWorkout(type) {
+  return history.filter(h => h.type === type).sort((a,b) => b.date.localeCompare(a.date))[0] || null;
+}
+
+function getLastWeightForExercise(type, exName) {
+  const last = getLastWorkout(type);
+  if (!last) return null;
+  const ex = last.exercises.find(e => e.name === exName);
+  if (!ex || !ex.sets || !ex.sets.length) return null;
+  // return max weight set
+  const maxSet = ex.sets.reduce((a,b) => (parseFloat(b.weight)||0) > (parseFloat(a.weight)||0) ? b : a, ex.sets[0]);
+  return maxSet;
+}
+
+// ============================================================
+// VIEWS
+// ============================================================
+function showView(name, btn) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('view-'+name).classList.add('active');
+  if (btn) btn.classList.add('active');
+  if (name === 'today') renderToday();
+  if (name === 'history') renderHistory();
+  if (name === 'plan') renderPlan();
+}
+
+// ============================================================
+// TODAY
+// ============================================================
+function renderToday() {
+  const { today, weekNum, todayWorkout } = getTodayInfo();
+  document.getElementById('weekBadge').textContent = weekNum === 0 ? 'Dlouhý týden' : 'Krátký týden';
+
+  const dateStr = today.toLocaleDateString('cs-CZ', { weekday:'long', day:'numeric', month:'long' });
+  const container = document.getElementById('todayContent');
+
+  let html = '';
+
+  if (todayWorkout) {
+    const last = getLastWorkout(todayWorkout.type);
+    const lastDate = last ? new Date(last.date).toLocaleDateString('cs-CZ',{day:'numeric',month:'short'}) : 'Poprvé!';
+    html += `
+      <div class="today-hero">
+        <div class="today-label">Dnešní trénink</div>
+        <div class="today-title">${todayWorkout.type}</div>
+        <div class="today-meta">${dateStr}</div>
+        <div class="today-meta" style="margin-top:4px">Naposledy: <strong>${lastDate}</strong> &nbsp;|&nbsp; ${EXERCISES[todayWorkout.type].length} cviků</div>
+        <button class="start-btn" onclick="startSession('${todayWorkout.type}','${getDateStr(today)}')">▶ SPUSTIT TRÉNINK</button>
+      </div>`;
+  } else {
+    html += `
+      <div class="rest-card">
+        <div class="rest-emoji">😴</div>
+        <h2>DEN ODPOČINKU</h2>
+        <p>${dateStr}</p>
+        <p style="margin-top:8px;font-size:13px;">Regenerace je součástí tréninku!</p>
+      </div>`;
+  }
+
+  // Next training days
+  html += `<div class="section-title">NADCHÁZEJÍCÍ</div><div class="next-days">`;
+  const upcoming = getUpcomingWorkouts(today, 4);
+  upcoming.forEach(u => {
+    html += `
+      <div class="next-day-card" onclick="startSession('${u.type}','${u.dateStr}')">
+        <div class="next-day-left">
+          <div class="next-day-when">${u.whenLabel}</div>
+          <div class="next-day-name">${u.label} — ${u.type}</div>
+        </div>
+        <div class="next-day-type">${u.type}</div>
+      </div>`;
+  });
+  html += `</div>`;
+
+  container.innerHTML = html;
+}
+
+function getUpcomingWorkouts(fromDate, count) {
+  const start = new Date(cycleStart);
+  const results = [];
+  const d = new Date(fromDate);
+  d.setDate(d.getDate() + 1); // start from tomorrow
+
+  for (let i = 0; i < 30 && results.length < count; i++) {
+    const diffDays = Math.floor((d - start) / 86400000);
+    const weekNum = Math.floor(diffDays / 7) % 2;
+    const dow = d.getDay();
+
+    const workout = CYCLE.find(c => {
+      if (weekNum === 0 && c.day < 4 && c.dow === dow) return true;
+      if (weekNum === 1 && c.day >= 4 && c.dow === dow) return true;
+      return false;
+    });
+
+    if (workout) {
+      const diff = Math.floor((d - fromDate) / 86400000);
+      let whenLabel = diff === 1 ? 'Zítra' : d.toLocaleDateString('cs-CZ',{weekday:'long'});
+      results.push({ ...workout, dateStr: getDateStr(d), whenLabel });
+    }
+    d.setDate(d.getDate() + 1);
+  }
+  return results;
+}
+
+// ============================================================
+// SESSION
+// ============================================================
+let currentSession = null;
+
+function startSession(type, dateStr) {
+  currentSession = {
+    type,
+    dateStr,
+    exercises: EXERCISES[type].map(name => ({
+      name,
+      sets: [{ reps: '', weight: '' }],
+      done: false,
+      open: false
+    }))
+  };
+
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById('view-session').classList.add('active');
+  renderSession();
+  window.scrollTo(0,0);
+}
+
+function renderSession() {
+  const { type, dateStr, exercises } = currentSession;
+  const dateLabel = new Date(dateStr+'T12:00:00').toLocaleDateString('cs-CZ',{weekday:'long',day:'numeric',month:'long'});
+  const doneCnt = exercises.filter(e => e.done).length;
+
+  let html = `
+    <div class="session-header">
+      <div class="back-btn" onclick="backToToday()">←</div>
+      <div style="flex:1">
+        <div class="session-title">${type}</div>
+        <div class="session-date">${dateLabel} · ${doneCnt}/${exercises.length} hotovo</div>
+      </div>
+      <button class="finish-btn" onclick="finishSession()">ULOŽIT</button>
+    </div>
+    <div class="exercise-cards">`;
+
+  exercises.forEach((ex, idx) => {
+    const lastSet = getLastWeightForExercise(type, ex.name);
+    const lastInfo = lastSet ? `<span>${lastSet.weight}kg × ${lastSet.reps}</span>` : '<span style="color:var(--text-muted)">První!</span>';
+
+    html += `
+      <div class="ex-card ${ex.done ? 'done' : ''} ${ex.open ? 'open' : ''}" id="ex-${idx}">
+        <div class="ex-header" onclick="toggleEx(${idx})">
+          <div class="ex-num">${ex.done ? '✓' : idx+1}</div>
+          <div class="ex-name">${ex.name}</div>
+          <div class="ex-last">Naposledy: ${lastInfo}</div>
+        </div>
+        <div class="ex-body">
+          <table class="sets-table">
+            <thead><tr>
+              <th style="width:28px">#</th>
+              <th>Váha (kg)</th>
+              <th>Opak.</th>
+              <th>Naposledy</th>
+            </tr></thead>
+            <tbody id="sets-${idx}">`;
+
+    ex.sets.forEach((set, si) => {
+      const refW = lastSet ? lastSet.weight : '';
+      const refR = lastSet ? lastSet.reps : '';
+      html += `
+        <tr>
+          <td class="set-num">${si+1}</td>
+          <td><input class="set-input" type="number" min="0" step="0.5" placeholder="kg" value="${set.weight}" oninput="updateSet(${idx},${si},'weight',this.value)" /></td>
+          <td><input class="set-input" type="number" min="0" step="1" placeholder="reps" value="${set.reps}" oninput="updateSet(${idx},${si},'reps',this.value)" /></td>
+          <td class="set-ref">${refW ? `<strong>${refW}×${refR}</strong>` : '—'}</td>
+        </tr>`;
+    });
+
+    html += `</tbody></table>
+          <button class="add-set-btn" onclick="addSet(${idx})">+ Přidat sérii</button>
+          <button class="done-btn" onclick="markDone(${idx})">${ex.done ? '✓ HOTOVO' : 'OZNAČIT JAKO HOTOVÉ'}</button>
+        </div>
+      </div>`;
+  });
+
+  html += `</div><div style="height:20px"></div>`;
+  document.getElementById('view-session').innerHTML = html;
+}
+
+function toggleEx(idx) {
+  currentSession.exercises[idx].open = !currentSession.exercises[idx].open;
+  renderSession();
+  setTimeout(() => {
+    document.getElementById(`ex-${idx}`).scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }, 50);
+}
+
+function updateSet(exIdx, setIdx, field, val) {
+  currentSession.exercises[exIdx].sets[setIdx][field] = val;
+}
+
+function addSet(exIdx) {
+  currentSession.exercises[exIdx].sets.push({ reps: '', weight: '' });
+  renderSession();
+  // reopen
+  currentSession.exercises[exIdx].open = true;
+  renderSession();
+}
+
+function markDone(exIdx) {
+  currentSession.exercises[exIdx].done = !currentSession.exercises[exIdx].done;
+  if (currentSession.exercises[exIdx].done) currentSession.exercises[exIdx].open = false;
+  renderSession();
+}
+
+function finishSession() {
+  const anyData = currentSession.exercises.some(e => e.sets.some(s => s.weight || s.reps));
+  if (!anyData) {
+    showToast('Zadej alespoň pár hodnot!');
+    return;
+  }
+  history.push({
+    date: currentSession.dateStr,
+    type: currentSession.type,
+    exercises: currentSession.exercises.map(e => ({ name: e.name, sets: e.sets }))
+  });
+  saveData('gymlog_history', history);
+  showToast('Trénink uložen! 💪');
+  backToToday();
+}
+
+function backToToday() {
+  currentSession = null;
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById('view-today').classList.add('active');
+  document.querySelectorAll('.nav-btn')[0].classList.add('active');
+  renderToday();
+  window.scrollTo(0,0);
+}
+
+// ============================================================
+// HISTORY
+// ============================================================
+function renderHistory() {
+  const list = document.getElementById('historyList');
+  if (!history.length) {
+    list.innerHTML = `<div class="empty-state"><div class="emoji">🏋️</div><p>Zatím žádné tréninky.<br>Čas se pustit do toho!</p></div>`;
+    return;
+  }
+  const sorted = [...history].sort((a,b) => b.date.localeCompare(a.date));
+  list.innerHTML = sorted.map((h, i) => {
+    const dateLabel = new Date(h.date+'T12:00:00').toLocaleDateString('cs-CZ',{weekday:'long',day:'numeric',month:'long'});
+    const exRows = h.exercises.map(e => {
+      const bestSet = e.sets && e.sets.length ? e.sets.reduce((a,b) => (parseFloat(b.weight)||0) > (parseFloat(a.weight)||0) ? b : a, e.sets[0]) : null;
+      const stat = bestSet && (bestSet.weight || bestSet.reps) ? `<strong>${bestSet.weight || '?'}kg</strong> × ${bestSet.reps || '?'}` : '—';
+      return `<div class="hist-ex-row"><span class="hist-ex-name">${e.name}</span><span class="hist-ex-stats">${stat}</span></div>`;
+    }).join('');
+    return `
+      <div class="hist-card" id="hist-${i}">
+        <div class="hist-header" onclick="toggleHist(${i})">
+          <div class="hist-left">
+            <div class="hist-type">${h.type}</div>
+            <div class="hist-date">${dateLabel}</div>
+          </div>
+          <div class="hist-badge">${h.exercises.length} cviků</div>
+        </div>
+        <div class="hist-exercises">${exRows}</div>
+      </div>`;
+  }).join('');
+}
+
+function toggleHist(i) {
+  document.getElementById('hist-'+i).classList.toggle('open');
+}
+
+// ============================================================
+// PLAN
+// ============================================================
+function renderPlan() {
+  const week1Days = [
+    { label: 'Pondělí', type: 'LEGS' },
+    { label: 'Úterý', type: 'PUSH' },
+    { label: 'Pátek', type: 'PULL' },
+    { label: 'Neděle', type: 'LEGS' },
+  ];
+  const week2Days = [
+    { label: 'Středa', type: 'PUSH' },
+    { label: 'Čtvrtek', type: 'PULL' },
+  ];
+
+  function dayCard(d, idx, weekPrefix) {
+    const id = `pd-${weekPrefix}-${idx}`;
+    const exItems = EXERCISES[d.type].map(ex => `<div class="plan-ex-item">${ex}</div>`).join('');
+    return `
+      <div class="plan-day" id="${id}">
+        <div class="plan-day-header" onclick="togglePlanDay('${id}')">
+          <span class="plan-day-name">${d.label}</span>
+          <span class="plan-day-type type-${d.type.toLowerCase()}">${d.type}</span>
+        </div>
+        <div class="plan-day-exercises">${exItems}</div>
+      </div>`;
+  }
+
+  document.getElementById('planContent').innerHTML = `
+    <div class="plan-week">
+      <div class="plan-week-title">DLOUHÝ TÝDEN</div>
+      <div class="plan-days">${week1Days.map((d,i) => dayCard(d,i,'w1')).join('')}</div>
+    </div>
+    <div class="plan-week">
+      <div class="plan-week-title">KRÁTKÝ TÝDEN</div>
+      <div class="plan-days">${week2Days.map((d,i) => dayCard(d,i,'w2')).join('')}</div>
+    </div>`;
+}
+
+function togglePlanDay(id) {
+  document.getElementById(id).classList.toggle('open');
+}
+
+// ============================================================
+// TOAST
+// ============================================================
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ============================================================
+// INIT
+// ============================================================
+renderToday();
+renderPlan();
+</script>
+</body>
+</html>
