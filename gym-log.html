@@ -146,15 +146,26 @@
   .next-day-when { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
   .next-day-name { font-family: 'Bebas Neue', sans-serif; font-size: 22px; color: var(--text); }
   .next-day-type {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 4px 10px;
     font-size: 12px;
     font-weight: 600;
-    color: var(--accent2);
+    padding: 4px 10px;
+    border-radius: 8px;
   }
+  .next-day-type.type-push { background: rgba(123,97,255,0.15); color: var(--accent2); border: 1px solid rgba(123,97,255,0.3); }
+  .next-day-type.type-pull { background: rgba(255,140,66,0.15); color: var(--orange); border: 1px solid rgba(255,140,66,0.3); }
+  .next-day-type.type-legs { background: rgba(255,77,77,0.15); color: var(--red); border: 1px solid rgba(255,77,77,0.3); }
   .drag-handle { font-size: 20px; color: var(--text-muted); padding: 4px 6px; }
+
+  /* EXPANDABLE UPCOMING CARD */
+  .next-day-card.expandable { flex-wrap: wrap; cursor: default; }
+  .next-day-card-top { display: flex; align-items: center; justify-content: space-between; width: 100%; }
+  .next-day-card.expandable .next-day-card-top { cursor: pointer; }
+  .next-day-exercises { display: none; width: 100%; padding-top: 10px; border-top: 1px solid var(--border); margin-top: 10px; }
+  .next-day-card.open .next-day-exercises { display: block; }
+  .next-day-ex-item { padding: 4px 0; font-size: 13px; color: var(--text-muted); display: flex; align-items: center; gap: 8px; }
+  .next-day-ex-item::before { content: ''; width: 4px; height: 4px; background: var(--accent); border-radius: 50%; flex-shrink: 0; }
+  .expand-arrow { font-size: 12px; color: var(--text-muted); transition: transform 0.2s; margin-left: 4px; }
+  .next-day-card.open .expand-arrow { transform: rotate(180deg); }
 
   .session-header {
     padding: 16px 20px;
@@ -602,22 +613,33 @@ function renderToday() {
   html += `<div class="section-title">NADCHÁZEJÍCÍ</div><div class="next-days" id="nextDaysList">`;
   const upcoming = getUpcomingWorkouts(today, 4);
   upcoming.forEach((u, idx) => {
+    const typeClass = u.type.toLowerCase();
+    const exItems = EXERCISES[u.type].map(ex => `<div class="next-day-ex-item">${ex}</div>`).join('');
     html += `
-      <div class="next-day-card" id="upcoming-${idx}" data-type="${u.type}" data-date="${u.dateStr}">
-        <div class="next-day-left">
-          <div class="next-day-when">${u.whenLabel}</div>
-          <div class="next-day-name">${u.label} — ${u.type}</div>
+      <div class="next-day-card expandable" id="upcoming-${idx}" data-type="${u.type}" data-date="${u.dateStr}">
+        <div class="next-day-card-top" onclick="toggleUpcoming(${idx})">
+          <div class="next-day-left">
+            <div class="next-day-when">${u.whenLabel}</div>
+            <div class="next-day-name">${u.label} — ${u.type}</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div class="next-day-type type-${typeClass}">${u.type}</div>
+            <span class="expand-arrow">▼</span>
+            ${!todayWorkout ? '<span class="drag-handle">⠿</span>' : ''}
+          </div>
         </div>
-        <div style="display:flex;align-items:center;gap:8px;">
-          <div class="next-day-type">${u.type}</div>
-          ${!todayWorkout ? '<span class="drag-handle">⠿</span>' : ''}
-        </div>
+        <div class="next-day-exercises">${exItems}</div>
       </div>`;
   });
   html += `</div>`;
   container.innerHTML = html;
 
   if (!todayWorkout) setupDragDrop(today);
+}
+
+function toggleUpcoming(idx) {
+  const card = document.getElementById('upcoming-'+idx);
+  if (card) card.classList.toggle('open');
 }
 
 function getUpcomingWorkouts(fromDate, count) {
@@ -658,8 +680,14 @@ function setupDragDrop(today) {
   let offsetX = 0, offsetY = 0;
 
   document.querySelectorAll('.next-day-card').forEach(card => {
-    card.addEventListener('touchstart', onTouchStart, { passive: true });
-    card.addEventListener('mousedown', onMouseDown);
+    card.addEventListener('touchstart', function(e) {
+      if (!e.target.classList.contains('drag-handle')) return;
+      onTouchStart.call(this, e);
+    }, { passive: true });
+    card.addEventListener('mousedown', function(e) {
+      if (!e.target.classList.contains('drag-handle')) return;
+      onMouseDown.call(this, e);
+    });
   });
 
   function initDrag(card, clientX, clientY) {
