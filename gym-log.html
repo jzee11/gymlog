@@ -154,6 +154,33 @@
     transition: all 0.2s;
   }
   .next-day-card:active { background: var(--surface2); }
+  .next-day-card.dragging {
+    opacity: 0.4;
+    transform: scale(0.97);
+  }
+  .next-day-card.drag-ghost {
+    position: fixed;
+    z-index: 300;
+    pointer-events: none;
+    opacity: 0.92;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+    transform: scale(1.03) rotate(1deg);
+    transition: none;
+    border-color: var(--accent);
+  }
+  .drop-zone {
+    border: 2px dashed var(--border);
+    border-radius: 20px;
+    padding: 20px;
+    margin-bottom: 20px;
+    text-align: center;
+    transition: all 0.2s;
+  }
+  .drop-zone.active-drop {
+    border-color: var(--accent);
+    background: rgba(200,241,53,0.06);
+  }
+  .drop-zone-hint { font-size: 13px; color: var(--text-muted); margin-top: 8px; }
   .next-day-left { display: flex; flex-direction: column; }
   .next-day-when { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
   .next-day-name { font-family: 'Bebas Neue', sans-serif; font-size: 22px; color: var(--text); }
@@ -338,6 +365,136 @@
   .hist-ex-stats { color: var(--text-muted); font-size: 12px; }
   .hist-ex-stats strong { color: var(--accent); }
 
+  /* HISTORY ACTIONS */
+  .hist-actions {
+    display: flex;
+    gap: 8px;
+    padding: 12px 16px;
+    border-top: 1px solid var(--border);
+  }
+  .hist-action-btn {
+    flex: 1;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .hist-action-btn.edit { background: var(--surface2); color: var(--accent2); border-color: rgba(123,97,255,0.3); }
+  .hist-action-btn.delete { background: var(--surface2); color: var(--red); border-color: rgba(255,77,77,0.3); }
+  .hist-action-btn:active { opacity: 0.7; }
+
+  /* EDIT MODAL */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.8);
+    z-index: 500;
+    display: flex; align-items: flex-end;
+    backdrop-filter: blur(4px);
+  }
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 24px 24px 0 0;
+    width: 100%; max-width: 480px;
+    margin: 0 auto;
+    max-height: 85vh;
+    overflow-y: auto;
+    padding: 20px;
+  }
+  .modal-title { font-size: 28px; color: var(--accent); margin-bottom: 4px; }
+  .modal-subtitle { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; }
+  .modal-ex { margin-bottom: 20px; }
+  .modal-ex-name { font-size: 14px; font-weight: 600; margin-bottom: 8px; color: var(--text); }
+  .modal-set-row { display: flex; gap: 8px; align-items: center; margin-bottom: 6px; }
+  .modal-set-num { font-size: 12px; color: var(--text-muted); width: 20px; flex-shrink: 0; }
+  .modal-input {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 7px 10px;
+    width: 80px;
+    text-align: center;
+    outline: none;
+  }
+  .modal-input:focus { border-color: var(--accent); }
+  .modal-del-set {
+    background: none; border: none;
+    color: var(--red); font-size: 18px;
+    cursor: pointer; padding: 0 4px;
+    flex-shrink: 0;
+  }
+  .modal-add-set {
+    background: transparent;
+    border: 1px dashed var(--border);
+    border-radius: 8px;
+    color: var(--text-muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    padding: 6px;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 4px;
+  }
+  .modal-footer { display: flex; gap: 10px; margin-top: 20px; padding-bottom: 10px; }
+  .modal-cancel {
+    flex: 1; padding: 13px;
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 12px; color: var(--text-muted);
+    font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600;
+    cursor: pointer;
+  }
+  .modal-save {
+    flex: 2; padding: 13px;
+    background: var(--accent); border: none;
+    border-radius: 12px; color: #0a0a0f;
+    font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: 1px;
+    cursor: pointer;
+  }
+
+  /* CONFIRM DIALOG */
+  .confirm-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.85);
+    z-index: 600;
+    display: flex; align-items: center; justify-content: center;
+    padding: 20px;
+    backdrop-filter: blur(4px);
+  }
+  .confirm-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 24px;
+    width: 100%; max-width: 340px;
+    text-align: center;
+  }
+  .confirm-icon { font-size: 40px; margin-bottom: 12px; }
+  .confirm-title { font-size: 22px; margin-bottom: 8px; }
+  .confirm-text { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; }
+  .confirm-btns { display: flex; gap: 10px; }
+  .confirm-cancel {
+    flex: 1; padding: 12px;
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 12px; color: var(--text);
+    font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600;
+    cursor: pointer;
+  }
+  .confirm-delete {
+    flex: 1; padding: 12px;
+    background: var(--red); border: none;
+    border-radius: 12px; color: #fff;
+    font-family: 'Bebas Neue', sans-serif; font-size: 18px;
+    cursor: pointer;
+  }
+
   /* PLAN */
   .plan-week { margin-bottom: 24px; }
   .plan-week-title {
@@ -438,6 +595,11 @@
   }
   .nav-btn.active { color: var(--accent); background: rgba(200,241,53,0.08); }
   .nav-icon { font-size: 22px; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
 </style>
 </head>
 <body>
@@ -610,31 +772,203 @@ function renderToday() {
       </div>`;
   } else {
     html += `
-      <div class="rest-card">
+      <div class="drop-zone" id="dropZone">
         <div class="rest-emoji">😴</div>
-        <h2>DEN ODPOČINKU</h2>
-        <p>${dateStr}</p>
-        <p style="margin-top:8px;font-size:13px;">Regenerace je součástí tréninku!</p>
+        <h2 style="font-size:32px;color:var(--text-muted);margin-bottom:4px;">DEN ODPOČINKU</h2>
+        <p style="font-size:14px;color:var(--text-muted);">${dateStr}</p>
+        <div class="drop-zone-hint">⬆ Přetáhni trénink sem pro cvičení dnes</div>
       </div>`;
   }
 
   // Next training days
-  html += `<div class="section-title">NADCHÁZEJÍCÍ</div><div class="next-days">`;
+  html += `<div class="section-title">NADCHÁZEJÍCÍ</div><div class="next-days" id="nextDaysList">`;
   const upcoming = getUpcomingWorkouts(today, 4);
-  upcoming.forEach(u => {
+  upcoming.forEach((u, idx) => {
     html += `
-      <div class="next-day-card" onclick="startSession('${u.type}','${u.dateStr}')">
+      <div class="next-day-card" id="upcoming-${idx}"
+           data-type="${u.type}" data-date="${u.dateStr}" data-idx="${idx}">
         <div class="next-day-left">
           <div class="next-day-when">${u.whenLabel}</div>
           <div class="next-day-name">${u.label} — ${u.type}</div>
         </div>
-        <div class="next-day-type">${u.type}</div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div class="next-day-type">${u.type}</div>
+          ${!todayWorkout ? '<span style="font-size:20px;color:var(--text-muted);cursor:grab;padding:4px 2px;">⠿</span>' : ''}
+        </div>
       </div>`;
   });
   html += `</div>`;
 
   container.innerHTML = html;
+
+  // Setup drag & drop only on rest days
+  if (!todayWorkout) {
+    setupDragDrop(today);
+  }
 }
+
+function setupDragDrop(today) {
+  const cards = document.querySelectorAll('.next-day-card');
+  const dropZone = document.getElementById('dropZone');
+  if (!dropZone) return;
+
+  let ghost = null;
+  let dragging = null;
+  let dragType = null;
+  let dragDate = null;
+  let startY = 0;
+  let startX = 0;
+  let offsetX = 0;
+  let offsetY = 0;
+
+  cards.forEach(card => {
+    card.addEventListener('touchstart', onTouchStart, { passive: true });
+    card.addEventListener('mousedown', onMouseDown);
+  });
+
+  function onTouchStart(e) {
+    const touch = e.touches[0];
+    initDrag(this, touch.clientX, touch.clientY);
+    document.addEventListener('touchmove', onTouchMove, { passive: false });
+    document.addEventListener('touchend', onTouchEnd);
+  }
+
+  function onMouseDown(e) {
+    initDrag(this, e.clientX, e.clientY);
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
+  }
+
+  function initDrag(card, clientX, clientY) {
+    dragging = card;
+    dragType = card.dataset.type;
+    dragDate = card.dataset.date;
+    const rect = card.getBoundingClientRect();
+    offsetX = clientX - rect.left;
+    offsetY = clientY - rect.top;
+    startX = clientX;
+    startY = clientY;
+
+    // Create ghost
+    ghost = card.cloneNode(true);
+    ghost.classList.add('drag-ghost');
+    ghost.style.width = rect.width + 'px';
+    ghost.style.height = rect.height + 'px';
+    ghost.style.left = rect.left + 'px';
+    ghost.style.top = rect.top + 'px';
+    document.body.appendChild(ghost);
+
+    setTimeout(() => card.classList.add('dragging'), 0);
+  }
+
+  function moveGhost(clientX, clientY) {
+    if (!ghost) return;
+    ghost.style.left = (clientX - offsetX) + 'px';
+    ghost.style.top = (clientY - offsetY) + 'px';
+
+    // Check if over drop zone
+    const dzRect = dropZone.getBoundingClientRect();
+    if (clientY < dzRect.bottom && clientY > dzRect.top &&
+        clientX > dzRect.left && clientX < dzRect.right) {
+      dropZone.classList.add('active-drop');
+    } else {
+      dropZone.classList.remove('active-drop');
+    }
+  }
+
+  function onTouchMove(e) {
+    e.preventDefault();
+    const touch = e.touches[0];
+    moveGhost(touch.clientX, touch.clientY);
+  }
+
+  function onMouseMove(e) {
+    moveGhost(e.clientX, e.clientY);
+  }
+
+  function endDrag(clientX, clientY) {
+    if (!ghost || !dragging) return;
+
+    const dzRect = dropZone.getBoundingClientRect();
+    const dropped = clientY < dzRect.bottom && clientY > dzRect.top &&
+                    clientX > dzRect.left && clientX < dzRect.right;
+
+    ghost.remove();
+    ghost = null;
+    dragging.classList.remove('dragging');
+    dropZone.classList.remove('active-drop');
+
+    if (dropped) {
+      dropWorkoutToToday(dragType, getDateStr(today));
+    }
+
+    dragging = null;
+    dragType = null;
+    dragDate = null;
+
+    document.removeEventListener('touchmove', onTouchMove);
+    document.removeEventListener('touchend', onTouchEnd);
+    document.removeEventListener('mousemove', onMouseMove);
+    document.removeEventListener('mouseup', onMouseUp);
+  }
+
+  function onTouchEnd(e) {
+    const touch = e.changedTouches[0];
+    endDrag(touch.clientX, touch.clientY);
+  }
+
+  function onMouseUp(e) {
+    endDrag(e.clientX, e.clientY);
+  }
+}
+
+function dropWorkoutToToday(type, todayDateStr) {
+  // Animate and replace rest card with workout card
+  const dropZone = document.getElementById('dropZone');
+  if (dropZone) {
+    dropZone.style.transition = 'all 0.3s';
+    dropZone.style.borderColor = 'var(--accent)';
+    dropZone.style.background = 'rgba(200,241,53,0.1)';
+  }
+
+  setTimeout(() => {
+    const last = getLastWorkout(type);
+    const lastDate = last ? new Date(last.date).toLocaleDateString('cs-CZ',{day:'numeric',month:'short'}) : 'Poprvé!';
+    const today = new Date(todayDateStr + 'T12:00:00');
+    const dateStr = today.toLocaleDateString('cs-CZ', { weekday:'long', day:'numeric', month:'long' });
+
+    const container = document.getElementById('todayContent');
+
+    // Replace drop zone with hero card
+    const heroHtml = `
+      <div class="today-hero" style="animation: fadeIn 0.3s ease">
+        <div class="today-label">Dnešní trénink <span style="font-size:11px;background:rgba(200,241,53,0.15);border-radius:6px;padding:2px 8px;margin-left:6px;color:var(--accent)">Přesunuto</span></div>
+        <div class="today-title">${type}</div>
+        <div class="today-meta">${dateStr}</div>
+        <div class="today-meta" style="margin-top:4px">Naposledy: <strong>${lastDate}</strong> &nbsp;|&nbsp; ${EXERCISES[type].length} cviků</div>
+        <button class="start-btn" onclick="startSession('${type}','${todayDateStr}')">▶ SPUSTIT TRÉNINK</button>
+      </div>`;
+
+    // Remove drop zone, insert hero
+    const dz = document.getElementById('dropZone');
+    if (dz) dz.outerHTML = heroHtml;
+
+    // Remove the dragged card from upcoming list
+    const cards = document.querySelectorAll('.next-day-card');
+    cards.forEach(card => {
+      if (card.dataset.type === type) {
+        card.style.transition = 'all 0.3s';
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(-10px)';
+        setTimeout(() => card.remove(), 300);
+        return;
+      }
+    });
+
+    showToast(`${type} přesunuto na dnes! 💪`);
+  }, 150);
+}
+
 
 function getUpcomingWorkouts(fromDate, count) {
   const start = new Date(cycleStart);
@@ -808,7 +1142,9 @@ function renderHistory() {
     return;
   }
   const sorted = [...history].sort((a,b) => b.date.localeCompare(a.date));
-  list.innerHTML = sorted.map((h, i) => {
+  // Build index map from sorted to original history index
+  list.innerHTML = sorted.map((h, si) => {
+    const origIdx = history.indexOf(h);
     const dateLabel = new Date(h.date+'T12:00:00').toLocaleDateString('cs-CZ',{weekday:'long',day:'numeric',month:'long'});
     const exRows = h.exercises.map(e => {
       const bestSet = e.sets && e.sets.length ? e.sets.reduce((a,b) => (parseFloat(b.weight)||0) > (parseFloat(a.weight)||0) ? b : a, e.sets[0]) : null;
@@ -816,21 +1152,152 @@ function renderHistory() {
       return `<div class="hist-ex-row"><span class="hist-ex-name">${e.name}</span><span class="hist-ex-stats">${stat}</span></div>`;
     }).join('');
     return `
-      <div class="hist-card" id="hist-${i}">
-        <div class="hist-header" onclick="toggleHist(${i})">
+      <div class="hist-card" id="hist-${si}">
+        <div class="hist-header" onclick="toggleHist(${si})">
           <div class="hist-left">
             <div class="hist-type">${h.type}</div>
             <div class="hist-date">${dateLabel}</div>
           </div>
           <div class="hist-badge">${h.exercises.length} cviků</div>
         </div>
-        <div class="hist-exercises">${exRows}</div>
+        <div class="hist-exercises">
+          ${exRows}
+          <div class="hist-actions">
+            <button class="hist-action-btn edit" onclick="openEditModal(${origIdx})">✏️ Upravit</button>
+            <button class="hist-action-btn delete" onclick="confirmDelete(${origIdx})">🗑️ Smazat</button>
+          </div>
+        </div>
       </div>`;
   }).join('');
 }
 
 function toggleHist(i) {
   document.getElementById('hist-'+i).classList.toggle('open');
+}
+
+// ============================================================
+// EDIT MODAL
+// ============================================================
+let editIdx = null;
+let editData = null;
+
+function openEditModal(origIdx) {
+  editIdx = origIdx;
+  editData = JSON.parse(JSON.stringify(history[origIdx])); // deep copy
+  renderEditModal();
+}
+
+function renderEditModal() {
+  const h = editData;
+  const dateLabel = new Date(h.date+'T12:00:00').toLocaleDateString('cs-CZ',{weekday:'long',day:'numeric',month:'long'});
+
+  let exHtml = h.exercises.map((ex, ei) => {
+    const setsHtml = ex.sets.map((set, si) => `
+      <div class="modal-set-row">
+        <span class="modal-set-num">${si+1}</span>
+        <input class="modal-input" type="number" min="0" step="0.5" placeholder="kg" value="${set.weight}" oninput="updateEditSet(${ei},${si},'weight',this.value)" />
+        <input class="modal-input" type="number" min="0" step="1" placeholder="rep" value="${set.reps}" oninput="updateEditSet(${ei},${si},'reps',this.value)" />
+        <button class="modal-del-set" onclick="removeEditSet(${ei},${si})">×</button>
+      </div>`).join('');
+    return `
+      <div class="modal-ex">
+        <div class="modal-ex-name">${ex.name}</div>
+        ${setsHtml}
+        <button class="modal-add-set" onclick="addEditSet(${ei})">+ série</button>
+      </div>`;
+  }).join('');
+
+  const html = `
+    <div class="modal-overlay" onclick="closeEditModal(event)">
+      <div class="modal" onclick="event.stopPropagation()">
+        <div class="modal-title">${h.type}</div>
+        <div class="modal-subtitle">${dateLabel}</div>
+        ${exHtml}
+        <div class="modal-footer">
+          <button class="modal-cancel" onclick="closeEditModal()">Zrušit</button>
+          <button class="modal-save" onclick="saveEdit()">ULOŽIT</button>
+        </div>
+      </div>
+    </div>`;
+
+  const existing = document.getElementById('editModal');
+  if (existing) existing.remove();
+  const div = document.createElement('div');
+  div.id = 'editModal';
+  div.innerHTML = html;
+  document.body.appendChild(div);
+}
+
+function updateEditSet(ei, si, field, val) {
+  editData.exercises[ei].sets[si][field] = val;
+}
+
+function addEditSet(ei) {
+  editData.exercises[ei].sets.push({ weight: '', reps: '' });
+  renderEditModal();
+}
+
+function removeEditSet(ei, si) {
+  if (editData.exercises[ei].sets.length <= 1) return;
+  editData.exercises[ei].sets.splice(si, 1);
+  renderEditModal();
+}
+
+function saveEdit() {
+  history[editIdx] = editData;
+  saveData('gymlog_history', history);
+  closeEditModal();
+  renderHistory();
+  showToast('Trénink upraven! ✅');
+}
+
+function closeEditModal(e) {
+  if (e && e.target !== document.querySelector('.modal-overlay')) return;
+  const el = document.getElementById('editModal');
+  if (el) el.remove();
+  editIdx = null; editData = null;
+}
+
+// ============================================================
+// DELETE CONFIRM
+// ============================================================
+function confirmDelete(origIdx) {
+  const h = history[origIdx];
+  const dateLabel = new Date(h.date+'T12:00:00').toLocaleDateString('cs-CZ',{day:'numeric',month:'long'});
+
+  const html = `
+    <div class="confirm-overlay" onclick="closeConfirm(event)">
+      <div class="confirm-box" onclick="event.stopPropagation()">
+        <div class="confirm-icon">🗑️</div>
+        <div class="confirm-title">Smazat trénink?</div>
+        <div class="confirm-text">${h.type} · ${dateLabel}<br>Tato akce nejde vrátit zpět.</div>
+        <div class="confirm-btns">
+          <button class="confirm-cancel" onclick="closeConfirm()">Zrušit</button>
+          <button class="confirm-delete" onclick="deleteWorkout(${origIdx})">SMAZAT</button>
+        </div>
+      </div>
+    </div>`;
+
+  const existing = document.getElementById('confirmModal');
+  if (existing) existing.remove();
+  const div = document.createElement('div');
+  div.id = 'confirmModal';
+  div.innerHTML = html;
+  document.body.appendChild(div);
+}
+
+function deleteWorkout(origIdx) {
+  history.splice(origIdx, 1);
+  saveData('gymlog_history', history);
+  closeConfirm();
+  renderHistory();
+  showToast('Trénink smazán.');
+}
+
+function closeConfirm(e) {
+  if (e && e.target !== document.querySelector('.confirm-overlay')) return;
+  const el = document.getElementById('confirmModal');
+  if (el) el.remove();
 }
 
 // ============================================================
