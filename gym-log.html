@@ -32,7 +32,6 @@
   }
   h1, h2, h3 { font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.05em; }
 
-  /* HEADER */
   .app-header {
     padding: 20px 20px 12px;
     display: flex;
@@ -57,37 +56,9 @@
     font-weight: 500;
   }
 
-  /* TABS */
-  .tabs {
-    display: flex;
-    gap: 6px;
-    padding: 16px 20px 8px;
-  }
-  .tab {
-    flex: 1;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    color: var(--text-muted);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13px;
-    font-weight: 600;
-    padding: 10px 8px;
-    border-radius: 12px;
-    cursor: pointer;
-    transition: all 0.2s;
-    text-align: center;
-  }
-  .tab.active {
-    background: var(--accent);
-    color: #0a0a0f;
-    border-color: var(--accent);
-  }
-
-  /* VIEWS */
   .view { display: none; padding: 0 20px; }
   .view.active { display: block; }
 
-  /* TODAY CARD */
   .today-hero {
     background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
     border: 1px solid var(--border);
@@ -126,22 +97,24 @@
   }
   .start-btn:active { transform: scale(0.97); }
 
-  /* REST DAY */
-  .rest-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
+  .drop-zone {
+    border: 2px dashed var(--border);
     border-radius: 20px;
-    padding: 30px 20px;
-    text-align: center;
+    padding: 24px 20px;
     margin-bottom: 20px;
+    text-align: center;
+    transition: all 0.25s;
   }
+  .drop-zone.active-drop {
+    border-color: var(--accent);
+    background: rgba(200,241,53,0.06);
+  }
+  .drop-zone-hint { font-size: 13px; color: var(--text-muted); margin-top: 8px; }
   .rest-emoji { font-size: 48px; margin-bottom: 12px; }
-  .rest-card h2 { font-size: 32px; color: var(--text-muted); margin-bottom: 8px; }
-  .rest-card p { font-size: 14px; color: var(--text-muted); }
 
-  /* NEXT UP */
   .section-title { font-size: 20px; color: var(--text-muted); margin-bottom: 12px; }
   .next-days { display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; }
+
   .next-day-card {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -150,37 +123,25 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    cursor: pointer;
-    transition: all 0.2s;
+    cursor: grab;
+    user-select: none;
+    -webkit-user-select: none;
+    transition: opacity 0.2s, transform 0.2s;
   }
-  .next-day-card:active { background: var(--surface2); }
   .next-day-card.dragging {
-    opacity: 0.4;
+    opacity: 0.35;
     transform: scale(0.97);
   }
   .next-day-card.drag-ghost {
     position: fixed;
     z-index: 300;
     pointer-events: none;
-    opacity: 0.92;
+    opacity: 0.93;
     box-shadow: 0 12px 40px rgba(0,0,0,0.5);
     transform: scale(1.03) rotate(1deg);
-    transition: none;
+    transition: none !important;
     border-color: var(--accent);
   }
-  .drop-zone {
-    border: 2px dashed var(--border);
-    border-radius: 20px;
-    padding: 20px;
-    margin-bottom: 20px;
-    text-align: center;
-    transition: all 0.2s;
-  }
-  .drop-zone.active-drop {
-    border-color: var(--accent);
-    background: rgba(200,241,53,0.06);
-  }
-  .drop-zone-hint { font-size: 13px; color: var(--text-muted); margin-top: 8px; }
   .next-day-left { display: flex; flex-direction: column; }
   .next-day-when { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
   .next-day-name { font-family: 'Bebas Neue', sans-serif; font-size: 22px; color: var(--text); }
@@ -193,8 +154,8 @@
     font-weight: 600;
     color: var(--accent2);
   }
+  .drag-handle { font-size: 20px; color: var(--text-muted); padding: 4px 6px; }
 
-  /* WORKOUT SESSION */
   .session-header {
     padding: 16px 20px;
     display: flex;
@@ -233,7 +194,6 @@
     flex-shrink: 0;
   }
 
-  /* EXERCISE CARDS */
   .exercise-cards { display: flex; flex-direction: column; gap: 12px; padding: 0 20px; }
   .ex-card {
     background: var(--surface);
@@ -269,7 +229,7 @@
   .ex-last span { color: var(--accent); font-weight: 600; }
   .ex-body { padding: 0 16px 16px; display: none; }
   .ex-card.open .ex-body { display: block; }
-  .ex-card.open .ex-header { border-bottom: 1px solid var(--border); padding-bottom: 14px; margin-bottom: 0; }
+  .ex-card.open .ex-header { border-bottom: 1px solid var(--border); }
 
   .sets-table { width: 100%; border-collapse: collapse; margin-bottom: 12px; }
   .sets-table th { font-size: 11px; color: var(--text-muted); text-align: left; padding: 8px 0 4px; text-transform: uppercase; letter-spacing: 1px; font-weight: 500; }
@@ -292,7 +252,6 @@
   .set-input:focus { border-color: var(--accent); }
   .set-ref { font-size: 12px; color: var(--text-muted); padding-left: 8px; }
   .set-ref strong { color: var(--accent2); }
-
   .add-set-btn {
     width: 100%;
     background: transparent;
@@ -304,10 +263,7 @@
     padding: 8px;
     cursor: pointer;
     margin-bottom: 10px;
-    transition: all 0.15s;
   }
-  .add-set-btn:active { border-color: var(--accent); color: var(--accent); }
-
   .done-btn {
     width: 100%;
     background: var(--surface2);
@@ -319,11 +275,9 @@
     letter-spacing: 1px;
     padding: 10px;
     cursor: pointer;
-    transition: all 0.15s;
   }
   .ex-card.done .done-btn { background: var(--accent); color: #0a0a0f; border-color: var(--accent); }
 
-  /* HISTORY */
   .history-list { display: flex; flex-direction: column; gap: 12px; padding: 8px 0; }
   .hist-card {
     background: var(--surface);
@@ -364,30 +318,48 @@
   .hist-ex-name { color: var(--text); }
   .hist-ex-stats { color: var(--text-muted); font-size: 12px; }
   .hist-ex-stats strong { color: var(--accent); }
-
-  /* HISTORY ACTIONS */
   .hist-actions {
     display: flex;
     gap: 8px;
-    padding: 12px 16px;
+    padding: 12px 0 0;
     border-top: 1px solid var(--border);
+    margin-top: 8px;
   }
   .hist-action-btn {
-    flex: 1;
-    padding: 10px;
+    flex: 1; padding: 10px;
     border-radius: 10px;
     border: 1px solid var(--border);
     font-family: 'DM Sans', sans-serif;
-    font-size: 13px;
-    font-weight: 600;
+    font-size: 13px; font-weight: 600;
     cursor: pointer;
-    transition: all 0.15s;
   }
   .hist-action-btn.edit { background: var(--surface2); color: var(--accent2); border-color: rgba(123,97,255,0.3); }
   .hist-action-btn.delete { background: var(--surface2); color: var(--red); border-color: rgba(255,77,77,0.3); }
-  .hist-action-btn:active { opacity: 0.7; }
 
-  /* EDIT MODAL */
+  .plan-week { margin-bottom: 24px; }
+  .plan-week-title {
+    font-size: 22px; color: var(--text-muted);
+    margin-bottom: 12px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .plan-week-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+  .plan-days { display: flex; flex-direction: column; gap: 8px; }
+  .plan-day { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
+  .plan-day-header { padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; }
+  .plan-day-name { font-family: 'Bebas Neue', sans-serif; font-size: 18px; }
+  .plan-day-type { font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 8px; }
+  .type-legs { background: rgba(255,77,77,0.15); color: var(--red); border: 1px solid rgba(255,77,77,0.3); }
+  .type-push { background: rgba(123,97,255,0.15); color: var(--accent2); border: 1px solid rgba(123,97,255,0.3); }
+  .type-pull { background: rgba(255,140,66,0.15); color: var(--orange); border: 1px solid rgba(255,140,66,0.3); }
+  .plan-day-exercises { padding: 0 16px 12px; display: none; }
+  .plan-day.open .plan-day-exercises { display: block; }
+  .plan-day.open .plan-day-header { border-bottom: 1px solid var(--border); }
+  .plan-ex-item { padding: 5px 0; font-size: 13px; color: var(--text-muted); display: flex; align-items: center; gap: 8px; }
+  .plan-ex-item::before { content: ''; width: 4px; height: 4px; background: var(--accent); border-radius: 50%; flex-shrink: 0; }
+
+  .empty-state { text-align: center; padding: 40px 20px; color: var(--text-muted); }
+  .empty-state .emoji { font-size: 48px; margin-bottom: 12px; }
+
   .modal-overlay {
     position: fixed; inset: 0;
     background: rgba(0,0,0,0.8);
@@ -396,14 +368,10 @@
     backdrop-filter: blur(4px);
   }
   .modal {
-    background: var(--surface);
-    border: 1px solid var(--border);
+    background: var(--surface); border: 1px solid var(--border);
     border-radius: 24px 24px 0 0;
     width: 100%; max-width: 480px;
-    margin: 0 auto;
-    max-height: 85vh;
-    overflow-y: auto;
-    padding: 20px;
+    margin: 0 auto; max-height: 85vh; overflow-y: auto; padding: 20px;
   }
   .modal-title { font-size: 28px; color: var(--accent); margin-bottom: 4px; }
   .modal-subtitle { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; }
@@ -412,69 +380,44 @@
   .modal-set-row { display: flex; gap: 8px; align-items: center; margin-bottom: 6px; }
   .modal-set-num { font-size: 12px; color: var(--text-muted); width: 20px; flex-shrink: 0; }
   .modal-input {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 14px;
-    font-weight: 600;
-    padding: 7px 10px;
-    width: 80px;
-    text-align: center;
-    outline: none;
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 8px; color: var(--text);
+    font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600;
+    padding: 7px 10px; width: 80px; text-align: center; outline: none;
   }
   .modal-input:focus { border-color: var(--accent); }
-  .modal-del-set {
-    background: none; border: none;
-    color: var(--red); font-size: 18px;
-    cursor: pointer; padding: 0 4px;
-    flex-shrink: 0;
-  }
+  .modal-del-set { background: none; border: none; color: var(--red); font-size: 18px; cursor: pointer; padding: 0 4px; flex-shrink: 0; }
   .modal-add-set {
-    background: transparent;
-    border: 1px dashed var(--border);
-    border-radius: 8px;
-    color: var(--text-muted);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 12px;
-    padding: 6px;
-    cursor: pointer;
-    width: 100%;
-    margin-top: 4px;
+    background: transparent; border: 1px dashed var(--border);
+    border-radius: 8px; color: var(--text-muted);
+    font-family: 'DM Sans', sans-serif; font-size: 12px;
+    padding: 6px; cursor: pointer; width: 100%; margin-top: 4px;
   }
   .modal-footer { display: flex; gap: 10px; margin-top: 20px; padding-bottom: 10px; }
   .modal-cancel {
     flex: 1; padding: 13px;
     background: var(--surface2); border: 1px solid var(--border);
     border-radius: 12px; color: var(--text-muted);
-    font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600;
-    cursor: pointer;
+    font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer;
   }
   .modal-save {
     flex: 2; padding: 13px;
     background: var(--accent); border: none;
     border-radius: 12px; color: #0a0a0f;
-    font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: 1px;
-    cursor: pointer;
+    font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: 1px; cursor: pointer;
   }
 
-  /* CONFIRM DIALOG */
   .confirm-overlay {
     position: fixed; inset: 0;
     background: rgba(0,0,0,0.85);
     z-index: 600;
     display: flex; align-items: center; justify-content: center;
-    padding: 20px;
-    backdrop-filter: blur(4px);
+    padding: 20px; backdrop-filter: blur(4px);
   }
   .confirm-box {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 24px;
-    width: 100%; max-width: 340px;
-    text-align: center;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 20px; padding: 24px;
+    width: 100%; max-width: 340px; text-align: center;
   }
   .confirm-icon { font-size: 40px; margin-bottom: 12px; }
   .confirm-title { font-size: 22px; margin-bottom: 8px; }
@@ -484,114 +427,37 @@
     flex: 1; padding: 12px;
     background: var(--surface2); border: 1px solid var(--border);
     border-radius: 12px; color: var(--text);
-    font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600;
-    cursor: pointer;
+    font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer;
   }
   .confirm-delete {
     flex: 1; padding: 12px;
     background: var(--red); border: none;
     border-radius: 12px; color: #fff;
-    font-family: 'Bebas Neue', sans-serif; font-size: 18px;
-    cursor: pointer;
+    font-family: 'Bebas Neue', sans-serif; font-size: 18px; cursor: pointer;
   }
 
-  /* PLAN */
-  .plan-week { margin-bottom: 24px; }
-  .plan-week-title {
-    font-size: 22px;
-    color: var(--text-muted);
-    margin-bottom: 12px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  .plan-week-title::after {
-    content: ''; flex: 1;
-    height: 1px; background: var(--border);
-  }
-  .plan-days { display: flex; flex-direction: column; gap: 8px; }
-  .plan-day {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    overflow: hidden;
-  }
-  .plan-day-header {
-    padding: 12px 16px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    cursor: pointer;
-  }
-  .plan-day-name { font-family: 'Bebas Neue', sans-serif; font-size: 18px; }
-  .plan-day-type {
-    font-size: 12px; font-weight: 600;
-    padding: 3px 10px;
-    border-radius: 8px;
-  }
-  .type-legs { background: rgba(255, 77, 77, 0.15); color: var(--red); border: 1px solid rgba(255,77,77,0.3); }
-  .type-push { background: rgba(123, 97, 255, 0.15); color: var(--accent2); border: 1px solid rgba(123,97,255,0.3); }
-  .type-pull { background: rgba(255, 140, 66, 0.15); color: var(--orange); border: 1px solid rgba(255,140,66,0.3); }
-  .plan-day-exercises { padding: 0 16px 12px; display: none; }
-  .plan-day.open .plan-day-exercises { display: block; }
-  .plan-day.open .plan-day-header { border-bottom: 1px solid var(--border); }
-  .plan-ex-item { padding: 5px 0; font-size: 13px; color: var(--text-muted); display: flex; align-items: center; gap: 8px; }
-  .plan-ex-item::before { content: ''; width: 4px; height: 4px; background: var(--accent); border-radius: 50%; flex-shrink: 0; }
-
-  /* EMPTY STATE */
-  .empty-state { text-align: center; padding: 40px 20px; color: var(--text-muted); }
-  .empty-state .emoji { font-size: 48px; margin-bottom: 12px; }
-  .empty-state p { font-size: 14px; }
-
-  /* TOAST */
   .toast {
-    position: fixed;
-    bottom: 90px;
-    left: 50%; transform: translateX(-50%);
-    background: var(--accent);
-    color: #0a0a0f;
-    font-weight: 700;
-    font-size: 14px;
-    padding: 10px 20px;
-    border-radius: 20px;
-    z-index: 999;
-    opacity: 0;
-    transition: opacity 0.3s;
-    pointer-events: none;
-    white-space: nowrap;
+    position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%);
+    background: var(--accent); color: #0a0a0f;
+    font-weight: 700; font-size: 14px;
+    padding: 10px 20px; border-radius: 20px;
+    z-index: 999; opacity: 0; transition: opacity 0.3s;
+    pointer-events: none; white-space: nowrap;
   }
   .toast.show { opacity: 1; }
 
-  /* NAV */
   .bottom-nav {
-    position: fixed;
-    bottom: 0; left: 50%;
-    transform: translateX(-50%);
+    position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
     width: 100%; max-width: 480px;
-    background: rgba(13,13,20,0.96);
-    backdrop-filter: blur(16px);
+    background: rgba(13,13,20,0.96); backdrop-filter: blur(16px);
     border-top: 1px solid var(--border);
-    display: flex;
-    padding: 10px 20px 20px;
-    gap: 6px;
-    z-index: 200;
+    display: flex; padding: 10px 20px 20px; gap: 6px; z-index: 200;
   }
   .nav-btn {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 3px;
-    background: none;
-    border: none;
-    color: var(--text-muted);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 10px;
-    font-weight: 500;
-    cursor: pointer;
-    padding: 8px 4px;
-    border-radius: 12px;
-    transition: all 0.2s;
+    flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px;
+    background: none; border: none; color: var(--text-muted);
+    font-family: 'DM Sans', sans-serif; font-size: 10px; font-weight: 500;
+    cursor: pointer; padding: 8px 4px; border-radius: 12px; transition: all 0.2s;
   }
   .nav-btn.active { color: var(--accent); background: rgba(200,241,53,0.08); }
   .nav-icon { font-size: 22px; }
@@ -609,88 +475,53 @@
   <div class="week-badge" id="weekBadge">Týden 1</div>
 </div>
 
-<!-- VIEWS -->
 <div class="view active" id="view-today">
   <div style="padding-top:16px;" id="todayContent"></div>
 </div>
-
-<div class="view" id="view-session">
-  <!-- session injected here -->
-</div>
-
+<div class="view" id="view-session"></div>
 <div class="view" id="view-history">
   <div style="padding-top:16px;">
     <div class="section-title">HISTORIE TRÉNINKŮ</div>
     <div class="history-list" id="historyList"></div>
   </div>
 </div>
-
 <div class="view" id="view-plan">
   <div style="padding-top:16px;" id="planContent"></div>
 </div>
 
-<!-- BOTTOM NAV -->
 <nav class="bottom-nav">
-  <button class="nav-btn active" onclick="showView('today',this)">
-    <span class="nav-icon">⚡</span>Dnes
-  </button>
-  <button class="nav-btn" onclick="showView('history',this)">
-    <span class="nav-icon">📋</span>Historie
-  </button>
-  <button class="nav-btn" onclick="showView('plan',this)">
-    <span class="nav-icon">📅</span>Plán
-  </button>
+  <button class="nav-btn active" onclick="showView('today',this)"><span class="nav-icon">⚡</span>Dnes</button>
+  <button class="nav-btn" onclick="showView('history',this)"><span class="nav-icon">📋</span>Historie</button>
+  <button class="nav-btn" onclick="showView('plan',this)"><span class="nav-icon">📅</span>Plán</button>
 </nav>
 
 <div class="toast" id="toast"></div>
 
 <script>
-// ============================================================
-// DATA
-// ============================================================
 const EXERCISES = {
-  LEGS: [
-    'Dřep','Legpress','Zakopávání v leže','Zakopávání v sedě','Výpony na lýtka','Pallofpress'
-  ],
-  PUSH: [
-    'Incline benchpress','Tlaky s jednoručkami v sedě','Kliky na bradlech',
-    'Upažování s jednoručkami','Tricepsové stahování kladky','Cable crunches'
-  ],
-  PULL: [
-    'Shyby','Chest supported row','Pullover','Facepulls',
-    'Barbell curl','Mrtvý tah','Hanging knee raises'
-  ]
+  LEGS: ['Dřep','Legpress','Zakopávání v leže','Zakopávání v sedě','Výpony na lýtka','Pallofpress'],
+  PUSH: ['Incline benchpress','Tlaky s jednoručkami v sedě','Kliky na bradlech','Upažování s jednoručkami','Tricepsové stahování kladky','Cable crunches'],
+  PULL: ['Shyby','Chest supported row','Pullover','Facepulls','Barbell curl','Mrtvý tah','Hanging knee raises']
 };
 
-// 14-day cycle: [dayOfWeek, workoutType]
-// Týden 1: Po=LEGS, Út=PUSH, Pá=PULL, Ne=LEGS
-// Týden 2 (days 8-14): St=PUSH, Čt=PULL
-// We store as absolute cycle positions
 const CYCLE = [
-  // Týden 1
-  { day: 0, dow: 1, type: 'LEGS', label: 'Pondělí' },  // 0
+  { day: 0, dow: 1, type: 'LEGS', label: 'Pondělí' },
   { day: 1, dow: 2, type: 'PUSH', label: 'Úterý' },
   { day: 2, dow: 5, type: 'PULL', label: 'Pátek' },
   { day: 3, dow: 0, type: 'LEGS', label: 'Neděle' },
-  // Týden 2
   { day: 4, dow: 3, type: 'PUSH', label: 'Středa' },
   { day: 5, dow: 4, type: 'PULL', label: 'Čtvrtek' },
 ];
 
-// Storage helpers
 function saveData(key, val) { try { localStorage.setItem(key, JSON.stringify(val)); } catch(e){} }
 function loadData(key, def) { try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : def; } catch(e){ return def; } }
 
-// workoutHistory: array of { date, type, exercises: [{name, sets:[{reps,weight}]}] }
 let history = loadData('gymlog_history', []);
-// cycleStart: ISO date string of when cycle started (Monday of week 1)
 let cycleStart = loadData('gymlog_cycleStart', null);
 
-// Set cycle start if not set - find last Monday
 if (!cycleStart) {
   const now = new Date();
-  const day = now.getDay(); // 0=Sun
-  const diff = (day === 0 ? 6 : day - 1);
+  const diff = (now.getDay() === 0 ? 6 : now.getDay() - 1);
   const mon = new Date(now);
   mon.setDate(now.getDate() - diff);
   mon.setHours(0,0,0,0);
@@ -698,26 +529,21 @@ if (!cycleStart) {
   saveData('gymlog_cycleStart', cycleStart);
 }
 
-function getDateStr(d) {
-  return d.toISOString().split('T')[0];
-}
+function getDateStr(d) { return d.toISOString().split('T')[0]; }
 
 function getTodayInfo() {
   const today = new Date();
   today.setHours(0,0,0,0);
   const start = new Date(cycleStart);
   const diffDays = Math.floor((today - start) / 86400000);
-  const weekNum = Math.floor(diffDays / 7) % 2; // 0=week1, 1=week2
-  const dow = today.getDay(); // 0=Sun, 1=Mon...
-
-  // Find workout for today
+  const weekNum = Math.floor(diffDays / 7) % 2;
+  const dow = today.getDay();
   const todayWorkout = CYCLE.find(c => {
     if (weekNum === 0 && c.day < 4 && c.dow === dow) return true;
     if (weekNum === 1 && c.day >= 4 && c.dow === dow) return true;
     return false;
   });
-
-  return { today, weekNum, todayWorkout, diffDays };
+  return { today, weekNum, todayWorkout };
 }
 
 function getLastWorkout(type) {
@@ -729,14 +555,9 @@ function getLastWeightForExercise(type, exName) {
   if (!last) return null;
   const ex = last.exercises.find(e => e.name === exName);
   if (!ex || !ex.sets || !ex.sets.length) return null;
-  // return max weight set
-  const maxSet = ex.sets.reduce((a,b) => (parseFloat(b.weight)||0) > (parseFloat(a.weight)||0) ? b : a, ex.sets[0]);
-  return maxSet;
+  return ex.sets.reduce((a,b) => (parseFloat(b.weight)||0) > (parseFloat(a.weight)||0) ? b : a, ex.sets[0]);
 }
 
-// ============================================================
-// VIEWS
-// ============================================================
 function showView(name, btn) {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -753,10 +574,8 @@ function showView(name, btn) {
 function renderToday() {
   const { today, weekNum, todayWorkout } = getTodayInfo();
   document.getElementById('weekBadge').textContent = weekNum === 0 ? 'Dlouhý týden' : 'Krátký týden';
-
   const dateStr = today.toLocaleDateString('cs-CZ', { weekday:'long', day:'numeric', month:'long' });
   const container = document.getElementById('todayContent');
-
   let html = '';
 
   if (todayWorkout) {
@@ -780,213 +599,41 @@ function renderToday() {
       </div>`;
   }
 
-  // Next training days
   html += `<div class="section-title">NADCHÁZEJÍCÍ</div><div class="next-days" id="nextDaysList">`;
   const upcoming = getUpcomingWorkouts(today, 4);
   upcoming.forEach((u, idx) => {
     html += `
-      <div class="next-day-card" id="upcoming-${idx}"
-           data-type="${u.type}" data-date="${u.dateStr}" data-idx="${idx}">
+      <div class="next-day-card" id="upcoming-${idx}" data-type="${u.type}" data-date="${u.dateStr}">
         <div class="next-day-left">
           <div class="next-day-when">${u.whenLabel}</div>
           <div class="next-day-name">${u.label} — ${u.type}</div>
         </div>
         <div style="display:flex;align-items:center;gap:8px;">
           <div class="next-day-type">${u.type}</div>
-          ${!todayWorkout ? '<span style="font-size:20px;color:var(--text-muted);cursor:grab;padding:4px 2px;">⠿</span>' : ''}
+          ${!todayWorkout ? '<span class="drag-handle">⠿</span>' : ''}
         </div>
       </div>`;
   });
   html += `</div>`;
-
   container.innerHTML = html;
 
-  // Setup drag & drop only on rest days
-  if (!todayWorkout) {
-    setupDragDrop(today);
-  }
+  if (!todayWorkout) setupDragDrop(today);
 }
-
-function setupDragDrop(today) {
-  const cards = document.querySelectorAll('.next-day-card');
-  const dropZone = document.getElementById('dropZone');
-  if (!dropZone) return;
-
-  let ghost = null;
-  let dragging = null;
-  let dragType = null;
-  let dragDate = null;
-  let startY = 0;
-  let startX = 0;
-  let offsetX = 0;
-  let offsetY = 0;
-
-  cards.forEach(card => {
-    card.addEventListener('touchstart', onTouchStart, { passive: true });
-    card.addEventListener('mousedown', onMouseDown);
-  });
-
-  function onTouchStart(e) {
-    const touch = e.touches[0];
-    initDrag(this, touch.clientX, touch.clientY);
-    document.addEventListener('touchmove', onTouchMove, { passive: false });
-    document.addEventListener('touchend', onTouchEnd);
-  }
-
-  function onMouseDown(e) {
-    initDrag(this, e.clientX, e.clientY);
-    document.addEventListener('mousemove', onMouseMove);
-    document.addEventListener('mouseup', onMouseUp);
-  }
-
-  function initDrag(card, clientX, clientY) {
-    dragging = card;
-    dragType = card.dataset.type;
-    dragDate = card.dataset.date;
-    const rect = card.getBoundingClientRect();
-    offsetX = clientX - rect.left;
-    offsetY = clientY - rect.top;
-    startX = clientX;
-    startY = clientY;
-
-    // Create ghost
-    ghost = card.cloneNode(true);
-    ghost.classList.add('drag-ghost');
-    ghost.style.width = rect.width + 'px';
-    ghost.style.height = rect.height + 'px';
-    ghost.style.left = rect.left + 'px';
-    ghost.style.top = rect.top + 'px';
-    document.body.appendChild(ghost);
-
-    setTimeout(() => card.classList.add('dragging'), 0);
-  }
-
-  function moveGhost(clientX, clientY) {
-    if (!ghost) return;
-    ghost.style.left = (clientX - offsetX) + 'px';
-    ghost.style.top = (clientY - offsetY) + 'px';
-
-    // Check if over drop zone
-    const dzRect = dropZone.getBoundingClientRect();
-    if (clientY < dzRect.bottom && clientY > dzRect.top &&
-        clientX > dzRect.left && clientX < dzRect.right) {
-      dropZone.classList.add('active-drop');
-    } else {
-      dropZone.classList.remove('active-drop');
-    }
-  }
-
-  function onTouchMove(e) {
-    e.preventDefault();
-    const touch = e.touches[0];
-    moveGhost(touch.clientX, touch.clientY);
-  }
-
-  function onMouseMove(e) {
-    moveGhost(e.clientX, e.clientY);
-  }
-
-  function endDrag(clientX, clientY) {
-    if (!ghost || !dragging) return;
-
-    const dzRect = dropZone.getBoundingClientRect();
-    const dropped = clientY < dzRect.bottom && clientY > dzRect.top &&
-                    clientX > dzRect.left && clientX < dzRect.right;
-
-    ghost.remove();
-    ghost = null;
-    dragging.classList.remove('dragging');
-    dropZone.classList.remove('active-drop');
-
-    if (dropped) {
-      dropWorkoutToToday(dragType, getDateStr(today));
-    }
-
-    dragging = null;
-    dragType = null;
-    dragDate = null;
-
-    document.removeEventListener('touchmove', onTouchMove);
-    document.removeEventListener('touchend', onTouchEnd);
-    document.removeEventListener('mousemove', onMouseMove);
-    document.removeEventListener('mouseup', onMouseUp);
-  }
-
-  function onTouchEnd(e) {
-    const touch = e.changedTouches[0];
-    endDrag(touch.clientX, touch.clientY);
-  }
-
-  function onMouseUp(e) {
-    endDrag(e.clientX, e.clientY);
-  }
-}
-
-function dropWorkoutToToday(type, todayDateStr) {
-  // Animate and replace rest card with workout card
-  const dropZone = document.getElementById('dropZone');
-  if (dropZone) {
-    dropZone.style.transition = 'all 0.3s';
-    dropZone.style.borderColor = 'var(--accent)';
-    dropZone.style.background = 'rgba(200,241,53,0.1)';
-  }
-
-  setTimeout(() => {
-    const last = getLastWorkout(type);
-    const lastDate = last ? new Date(last.date).toLocaleDateString('cs-CZ',{day:'numeric',month:'short'}) : 'Poprvé!';
-    const today = new Date(todayDateStr + 'T12:00:00');
-    const dateStr = today.toLocaleDateString('cs-CZ', { weekday:'long', day:'numeric', month:'long' });
-
-    const container = document.getElementById('todayContent');
-
-    // Replace drop zone with hero card
-    const heroHtml = `
-      <div class="today-hero" style="animation: fadeIn 0.3s ease">
-        <div class="today-label">Dnešní trénink <span style="font-size:11px;background:rgba(200,241,53,0.15);border-radius:6px;padding:2px 8px;margin-left:6px;color:var(--accent)">Přesunuto</span></div>
-        <div class="today-title">${type}</div>
-        <div class="today-meta">${dateStr}</div>
-        <div class="today-meta" style="margin-top:4px">Naposledy: <strong>${lastDate}</strong> &nbsp;|&nbsp; ${EXERCISES[type].length} cviků</div>
-        <button class="start-btn" onclick="startSession('${type}','${todayDateStr}')">▶ SPUSTIT TRÉNINK</button>
-      </div>`;
-
-    // Remove drop zone, insert hero
-    const dz = document.getElementById('dropZone');
-    if (dz) dz.outerHTML = heroHtml;
-
-    // Remove the dragged card from upcoming list
-    const cards = document.querySelectorAll('.next-day-card');
-    cards.forEach(card => {
-      if (card.dataset.type === type) {
-        card.style.transition = 'all 0.3s';
-        card.style.opacity = '0';
-        card.style.transform = 'translateY(-10px)';
-        setTimeout(() => card.remove(), 300);
-        return;
-      }
-    });
-
-    showToast(`${type} přesunuto na dnes! 💪`);
-  }, 150);
-}
-
 
 function getUpcomingWorkouts(fromDate, count) {
   const start = new Date(cycleStart);
   const results = [];
   const d = new Date(fromDate);
-  d.setDate(d.getDate() + 1); // start from tomorrow
-
+  d.setDate(d.getDate() + 1);
   for (let i = 0; i < 30 && results.length < count; i++) {
     const diffDays = Math.floor((d - start) / 86400000);
     const weekNum = Math.floor(diffDays / 7) % 2;
     const dow = d.getDay();
-
     const workout = CYCLE.find(c => {
       if (weekNum === 0 && c.day < 4 && c.dow === dow) return true;
       if (weekNum === 1 && c.day >= 4 && c.dow === dow) return true;
       return false;
     });
-
     if (workout) {
       const diff = Math.floor((d - fromDate) / 86400000);
       let whenLabel = diff === 1 ? 'Zítra' : d.toLocaleDateString('cs-CZ',{weekday:'long'});
@@ -998,22 +645,142 @@ function getUpcomingWorkouts(fromDate, count) {
 }
 
 // ============================================================
+// DRAG & DROP
+// ============================================================
+function setupDragDrop(today) {
+  const dropZone = document.getElementById('dropZone');
+  if (!dropZone) return;
+
+  let ghost = null;
+  let dragging = null;
+  let dragType = null;
+  let dragDate = null;
+  let offsetX = 0, offsetY = 0;
+
+  document.querySelectorAll('.next-day-card').forEach(card => {
+    card.addEventListener('touchstart', onTouchStart, { passive: true });
+    card.addEventListener('mousedown', onMouseDown);
+  });
+
+  function initDrag(card, clientX, clientY) {
+    dragging = card;
+    dragType = card.dataset.type;
+    dragDate = card.dataset.date;
+    const rect = card.getBoundingClientRect();
+    offsetX = clientX - rect.left;
+    offsetY = clientY - rect.top;
+
+    ghost = card.cloneNode(true);
+    ghost.classList.add('drag-ghost');
+    ghost.style.width = rect.width + 'px';
+    ghost.style.left = rect.left + 'px';
+    ghost.style.top = rect.top + 'px';
+    document.body.appendChild(ghost);
+    setTimeout(() => { if (dragging) dragging.classList.add('dragging'); }, 0);
+  }
+
+  function moveGhost(clientX, clientY) {
+    if (!ghost) return;
+    ghost.style.left = (clientX - offsetX) + 'px';
+    ghost.style.top = (clientY - offsetY) + 'px';
+    const dz = dropZone.getBoundingClientRect();
+    if (clientY < dz.bottom && clientY > dz.top && clientX > dz.left && clientX < dz.right) {
+      dropZone.classList.add('active-drop');
+    } else {
+      dropZone.classList.remove('active-drop');
+    }
+  }
+
+  function endDrag(clientX, clientY) {
+    if (!ghost || !dragging) return;
+    const dz = dropZone.getBoundingClientRect();
+    const dropped = clientY < dz.bottom && clientY > dz.top && clientX > dz.left && clientX < dz.right;
+
+    ghost.remove(); ghost = null;
+    dragging.classList.remove('dragging');
+    dropZone.classList.remove('active-drop');
+
+    // Save drag info before clearing
+    const droppedType = dragType;
+    const droppedOrigDate = dragDate;
+    dragging = null; dragType = null; dragDate = null;
+
+    if (dropped) dropWorkoutToToday(droppedType, getDateStr(today), droppedOrigDate);
+
+    document.removeEventListener('touchmove', onTouchMove);
+    document.removeEventListener('touchend', onTouchEnd);
+    document.removeEventListener('mousemove', onMouseMove);
+    document.removeEventListener('mouseup', onMouseUp);
+  }
+
+  function onTouchStart(e) {
+    const t = e.touches[0];
+    initDrag(this, t.clientX, t.clientY);
+    document.addEventListener('touchmove', onTouchMove, { passive: false });
+    document.addEventListener('touchend', onTouchEnd);
+  }
+  function onMouseDown(e) {
+    initDrag(this, e.clientX, e.clientY);
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
+  }
+  function onTouchMove(e) { e.preventDefault(); const t = e.touches[0]; moveGhost(t.clientX, t.clientY); }
+  function onMouseMove(e) { moveGhost(e.clientX, e.clientY); }
+  function onTouchEnd(e) { const t = e.changedTouches[0]; endDrag(t.clientX, t.clientY); }
+  function onMouseUp(e) { endDrag(e.clientX, e.clientY); }
+}
+
+function dropWorkoutToToday(type, todayDateStr, originalDate) {
+  const dropZone = document.getElementById('dropZone');
+  if (dropZone) {
+    dropZone.style.transition = 'all 0.3s';
+    dropZone.style.borderColor = 'var(--accent)';
+    dropZone.style.background = 'rgba(200,241,53,0.1)';
+  }
+  setTimeout(() => {
+    const last = getLastWorkout(type);
+    const lastDate = last ? new Date(last.date).toLocaleDateString('cs-CZ',{day:'numeric',month:'short'}) : 'Poprvé!';
+    const todayD = new Date(todayDateStr + 'T12:00:00');
+    const dateStr = todayD.toLocaleDateString('cs-CZ', { weekday:'long', day:'numeric', month:'long' });
+
+    const heroHtml = `
+      <div class="today-hero" style="animation: fadeIn 0.3s ease">
+        <div class="today-label">Dnešní trénink <span style="font-size:11px;background:rgba(200,241,53,0.15);border-radius:6px;padding:2px 8px;margin-left:6px;color:var(--accent)">Přesunuto</span></div>
+        <div class="today-title">${type}</div>
+        <div class="today-meta">${dateStr}</div>
+        <div class="today-meta" style="margin-top:4px">Naposledy: <strong>${lastDate}</strong> &nbsp;|&nbsp; ${EXERCISES[type].length} cviků</div>
+        <button class="start-btn" onclick="startSession('${type}','${todayDateStr}')">▶ SPUSTIT TRÉNINK</button>
+      </div>`;
+
+    const dz = document.getElementById('dropZone');
+    if (dz) dz.outerHTML = heroHtml;
+
+    // Remove ONLY the specific dragged card – match by type AND original date
+    let removed = false;
+    document.querySelectorAll('.next-day-card').forEach(card => {
+      if (!removed && card.dataset.type === type && card.dataset.date === originalDate) {
+        removed = true;
+        card.style.transition = 'all 0.3s';
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(-10px)';
+        setTimeout(() => card.remove(), 300);
+      }
+    });
+
+    showToast(`${type} přesunuto na dnes! 💪`);
+  }, 150);
+}
+
+// ============================================================
 // SESSION
 // ============================================================
 let currentSession = null;
 
 function startSession(type, dateStr) {
   currentSession = {
-    type,
-    dateStr,
-    exercises: EXERCISES[type].map(name => ({
-      name,
-      sets: [{ reps: '', weight: '' }],
-      done: false,
-      open: false
-    }))
+    type, dateStr,
+    exercises: EXERCISES[type].map(name => ({ name, sets: [{ reps:'', weight:'' }], done: false, open: false }))
   };
-
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   document.getElementById('view-session').classList.add('active');
@@ -1040,43 +807,35 @@ function renderSession() {
   exercises.forEach((ex, idx) => {
     const lastSet = getLastWeightForExercise(type, ex.name);
     const lastInfo = lastSet ? `<span>${lastSet.weight}kg × ${lastSet.reps}</span>` : '<span style="color:var(--text-muted)">První!</span>';
-
     html += `
-      <div class="ex-card ${ex.done ? 'done' : ''} ${ex.open ? 'open' : ''}" id="ex-${idx}">
+      <div class="ex-card ${ex.done?'done':''} ${ex.open?'open':''}" id="ex-${idx}">
         <div class="ex-header" onclick="toggleEx(${idx})">
-          <div class="ex-num">${ex.done ? '✓' : idx+1}</div>
+          <div class="ex-num">${ex.done?'✓':idx+1}</div>
           <div class="ex-name">${ex.name}</div>
           <div class="ex-last">Naposledy: ${lastInfo}</div>
         </div>
         <div class="ex-body">
           <table class="sets-table">
             <thead><tr>
-              <th style="width:28px">#</th>
-              <th>Váha (kg)</th>
-              <th>Opak.</th>
-              <th>Naposledy</th>
+              <th style="width:28px">#</th><th>Váha (kg)</th><th>Opak.</th><th>Naposledy</th>
             </tr></thead>
-            <tbody id="sets-${idx}">`;
-
+            <tbody>`;
     ex.sets.forEach((set, si) => {
       const refW = lastSet ? lastSet.weight : '';
       const refR = lastSet ? lastSet.reps : '';
-      html += `
-        <tr>
-          <td class="set-num">${si+1}</td>
-          <td><input class="set-input" type="number" min="0" step="0.5" placeholder="kg" value="${set.weight}" oninput="updateSet(${idx},${si},'weight',this.value)" /></td>
-          <td><input class="set-input" type="number" min="0" step="1" placeholder="reps" value="${set.reps}" oninput="updateSet(${idx},${si},'reps',this.value)" /></td>
-          <td class="set-ref">${refW ? `<strong>${refW}×${refR}</strong>` : '—'}</td>
-        </tr>`;
+      html += `<tr>
+        <td class="set-num">${si+1}</td>
+        <td><input class="set-input" type="number" min="0" step="0.5" placeholder="kg" value="${set.weight}" oninput="updateSet(${idx},${si},'weight',this.value)"/></td>
+        <td><input class="set-input" type="number" min="0" step="1" placeholder="reps" value="${set.reps}" oninput="updateSet(${idx},${si},'reps',this.value)"/></td>
+        <td class="set-ref">${refW ? `<strong>${refW}×${refR}</strong>` : '—'}</td>
+      </tr>`;
     });
-
     html += `</tbody></table>
           <button class="add-set-btn" onclick="addSet(${idx})">+ Přidat sérii</button>
-          <button class="done-btn" onclick="markDone(${idx})">${ex.done ? '✓ HOTOVO' : 'OZNAČIT JAKO HOTOVÉ'}</button>
+          <button class="done-btn" onclick="markDone(${idx})">${ex.done?'✓ HOTOVO':'OZNAČIT JAKO HOTOVÉ'}</button>
         </div>
       </div>`;
   });
-
   html += `</div><div style="height:20px"></div>`;
   document.getElementById('view-session').innerHTML = html;
 }
@@ -1084,35 +843,22 @@ function renderSession() {
 function toggleEx(idx) {
   currentSession.exercises[idx].open = !currentSession.exercises[idx].open;
   renderSession();
-  setTimeout(() => {
-    document.getElementById(`ex-${idx}`).scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  }, 50);
+  setTimeout(() => document.getElementById(`ex-${idx}`).scrollIntoView({ behavior:'smooth', block:'nearest' }), 50);
 }
-
-function updateSet(exIdx, setIdx, field, val) {
-  currentSession.exercises[exIdx].sets[setIdx][field] = val;
-}
-
+function updateSet(exIdx, setIdx, field, val) { currentSession.exercises[exIdx].sets[setIdx][field] = val; }
 function addSet(exIdx) {
-  currentSession.exercises[exIdx].sets.push({ reps: '', weight: '' });
-  renderSession();
-  // reopen
+  currentSession.exercises[exIdx].sets.push({ reps:'', weight:'' });
   currentSession.exercises[exIdx].open = true;
   renderSession();
 }
-
 function markDone(exIdx) {
   currentSession.exercises[exIdx].done = !currentSession.exercises[exIdx].done;
   if (currentSession.exercises[exIdx].done) currentSession.exercises[exIdx].open = false;
   renderSession();
 }
-
 function finishSession() {
   const anyData = currentSession.exercises.some(e => e.sets.some(s => s.weight || s.reps));
-  if (!anyData) {
-    showToast('Zadej alespoň pár hodnot!');
-    return;
-  }
+  if (!anyData) { showToast('Zadej alespoň pár hodnot!'); return; }
   history.push({
     date: currentSession.dateStr,
     type: currentSession.type,
@@ -1122,7 +868,6 @@ function finishSession() {
   showToast('Trénink uložen! 💪');
   backToToday();
 }
-
 function backToToday() {
   currentSession = null;
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
@@ -1142,13 +887,12 @@ function renderHistory() {
     return;
   }
   const sorted = [...history].sort((a,b) => b.date.localeCompare(a.date));
-  // Build index map from sorted to original history index
   list.innerHTML = sorted.map((h, si) => {
     const origIdx = history.indexOf(h);
     const dateLabel = new Date(h.date+'T12:00:00').toLocaleDateString('cs-CZ',{weekday:'long',day:'numeric',month:'long'});
     const exRows = h.exercises.map(e => {
       const bestSet = e.sets && e.sets.length ? e.sets.reduce((a,b) => (parseFloat(b.weight)||0) > (parseFloat(a.weight)||0) ? b : a, e.sets[0]) : null;
-      const stat = bestSet && (bestSet.weight || bestSet.reps) ? `<strong>${bestSet.weight || '?'}kg</strong> × ${bestSet.reps || '?'}` : '—';
+      const stat = bestSet && (bestSet.weight || bestSet.reps) ? `<strong>${bestSet.weight||'?'}kg</strong> × ${bestSet.reps||'?'}` : '—';
       return `<div class="hist-ex-row"><span class="hist-ex-name">${e.name}</span><span class="hist-ex-stats">${stat}</span></div>`;
     }).join('');
     return `
@@ -1171,42 +915,31 @@ function renderHistory() {
   }).join('');
 }
 
-function toggleHist(i) {
-  document.getElementById('hist-'+i).classList.toggle('open');
-}
+function toggleHist(i) { document.getElementById('hist-'+i).classList.toggle('open'); }
 
 // ============================================================
 // EDIT MODAL
 // ============================================================
-let editIdx = null;
-let editData = null;
+let editIdx = null, editData = null;
 
 function openEditModal(origIdx) {
   editIdx = origIdx;
-  editData = JSON.parse(JSON.stringify(history[origIdx])); // deep copy
+  editData = JSON.parse(JSON.stringify(history[origIdx]));
   renderEditModal();
 }
-
 function renderEditModal() {
   const h = editData;
   const dateLabel = new Date(h.date+'T12:00:00').toLocaleDateString('cs-CZ',{weekday:'long',day:'numeric',month:'long'});
-
   let exHtml = h.exercises.map((ex, ei) => {
     const setsHtml = ex.sets.map((set, si) => `
       <div class="modal-set-row">
         <span class="modal-set-num">${si+1}</span>
-        <input class="modal-input" type="number" min="0" step="0.5" placeholder="kg" value="${set.weight}" oninput="updateEditSet(${ei},${si},'weight',this.value)" />
-        <input class="modal-input" type="number" min="0" step="1" placeholder="rep" value="${set.reps}" oninput="updateEditSet(${ei},${si},'reps',this.value)" />
+        <input class="modal-input" type="number" min="0" step="0.5" placeholder="kg" value="${set.weight}" oninput="updateEditSet(${ei},${si},'weight',this.value)"/>
+        <input class="modal-input" type="number" min="0" step="1" placeholder="rep" value="${set.reps}" oninput="updateEditSet(${ei},${si},'reps',this.value)"/>
         <button class="modal-del-set" onclick="removeEditSet(${ei},${si})">×</button>
       </div>`).join('');
-    return `
-      <div class="modal-ex">
-        <div class="modal-ex-name">${ex.name}</div>
-        ${setsHtml}
-        <button class="modal-add-set" onclick="addEditSet(${ei})">+ série</button>
-      </div>`;
+    return `<div class="modal-ex"><div class="modal-ex-name">${ex.name}</div>${setsHtml}<button class="modal-add-set" onclick="addEditSet(${ei})">+ série</button></div>`;
   }).join('');
-
   const html = `
     <div class="modal-overlay" onclick="closeEditModal(event)">
       <div class="modal" onclick="event.stopPropagation()">
@@ -1219,38 +952,24 @@ function renderEditModal() {
         </div>
       </div>
     </div>`;
-
   const existing = document.getElementById('editModal');
   if (existing) existing.remove();
   const div = document.createElement('div');
-  div.id = 'editModal';
-  div.innerHTML = html;
+  div.id = 'editModal'; div.innerHTML = html;
   document.body.appendChild(div);
 }
-
-function updateEditSet(ei, si, field, val) {
-  editData.exercises[ei].sets[si][field] = val;
-}
-
-function addEditSet(ei) {
-  editData.exercises[ei].sets.push({ weight: '', reps: '' });
-  renderEditModal();
-}
-
+function updateEditSet(ei, si, field, val) { editData.exercises[ei].sets[si][field] = val; }
+function addEditSet(ei) { editData.exercises[ei].sets.push({ weight:'', reps:'' }); renderEditModal(); }
 function removeEditSet(ei, si) {
   if (editData.exercises[ei].sets.length <= 1) return;
-  editData.exercises[ei].sets.splice(si, 1);
-  renderEditModal();
+  editData.exercises[ei].sets.splice(si, 1); renderEditModal();
 }
-
 function saveEdit() {
   history[editIdx] = editData;
   saveData('gymlog_history', history);
-  closeEditModal();
-  renderHistory();
+  closeEditModal(); renderHistory();
   showToast('Trénink upraven! ✅');
 }
-
 function closeEditModal(e) {
   if (e && e.target !== document.querySelector('.modal-overlay')) return;
   const el = document.getElementById('editModal');
@@ -1259,12 +978,11 @@ function closeEditModal(e) {
 }
 
 // ============================================================
-// DELETE CONFIRM
+// DELETE
 // ============================================================
 function confirmDelete(origIdx) {
   const h = history[origIdx];
   const dateLabel = new Date(h.date+'T12:00:00').toLocaleDateString('cs-CZ',{day:'numeric',month:'long'});
-
   const html = `
     <div class="confirm-overlay" onclick="closeConfirm(event)">
       <div class="confirm-box" onclick="event.stopPropagation()">
@@ -1277,23 +995,18 @@ function confirmDelete(origIdx) {
         </div>
       </div>
     </div>`;
-
   const existing = document.getElementById('confirmModal');
   if (existing) existing.remove();
   const div = document.createElement('div');
-  div.id = 'confirmModal';
-  div.innerHTML = html;
+  div.id = 'confirmModal'; div.innerHTML = html;
   document.body.appendChild(div);
 }
-
 function deleteWorkout(origIdx) {
   history.splice(origIdx, 1);
   saveData('gymlog_history', history);
-  closeConfirm();
-  renderHistory();
+  closeConfirm(); renderHistory();
   showToast('Trénink smazán.');
 }
-
 function closeConfirm(e) {
   if (e && e.target !== document.querySelector('.confirm-overlay')) return;
   const el = document.getElementById('confirmModal');
@@ -1305,18 +1018,13 @@ function closeConfirm(e) {
 // ============================================================
 function renderPlan() {
   const week1Days = [
-    { label: 'Pondělí', type: 'LEGS' },
-    { label: 'Úterý', type: 'PUSH' },
-    { label: 'Pátek', type: 'PULL' },
-    { label: 'Neděle', type: 'LEGS' },
+    { label:'Pondělí', type:'LEGS' }, { label:'Úterý', type:'PUSH' },
+    { label:'Pátek', type:'PULL' }, { label:'Neděle', type:'LEGS' }
   ];
-  const week2Days = [
-    { label: 'Středa', type: 'PUSH' },
-    { label: 'Čtvrtek', type: 'PULL' },
-  ];
+  const week2Days = [{ label:'Středa', type:'PUSH' }, { label:'Čtvrtek', type:'PULL' }];
 
-  function dayCard(d, idx, weekPrefix) {
-    const id = `pd-${weekPrefix}-${idx}`;
+  function dayCard(d, idx, wp) {
+    const id = `pd-${wp}-${idx}`;
     const exItems = EXERCISES[d.type].map(ex => `<div class="plan-ex-item">${ex}</div>`).join('');
     return `
       <div class="plan-day" id="${id}">
@@ -1338,24 +1046,14 @@ function renderPlan() {
       <div class="plan-days">${week2Days.map((d,i) => dayCard(d,i,'w2')).join('')}</div>
     </div>`;
 }
+function togglePlanDay(id) { document.getElementById(id).classList.toggle('open'); }
 
-function togglePlanDay(id) {
-  document.getElementById(id).classList.toggle('open');
-}
-
-// ============================================================
-// TOAST
-// ============================================================
 function showToast(msg) {
   const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
+  t.textContent = msg; t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 2500);
 }
 
-// ============================================================
-// INIT
-// ============================================================
 renderToday();
 renderPlan();
 </script>
