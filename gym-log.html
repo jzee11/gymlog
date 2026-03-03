@@ -644,6 +644,7 @@ function toggleUpcoming(idx) {
 
 function getUpcomingWorkouts(fromDate, count) {
   const start = new Date(cycleStart);
+  const skipped = loadData('gymlog_skipped', []);
   const results = [];
   const d = new Date(fromDate);
   d.setDate(d.getDate() + 1);
@@ -657,9 +658,16 @@ function getUpcomingWorkouts(fromDate, count) {
       return false;
     });
     if (workout) {
-      const diff = Math.floor((d - fromDate) / 86400000);
-      let whenLabel = diff === 1 ? 'Zítra' : d.toLocaleDateString('cs-CZ',{weekday:'long'});
-      results.push({ ...workout, dateStr: getDateStr(d), whenLabel });
+      const dateStr = getDateStr(d);
+      // Skip if this workout was moved/done on a different day
+      const wasSkipped = skipped.some(s => s.type === workout.type && s.date === dateStr);
+      // Also skip if already logged on this date
+      const alreadyDone = history.some(h => h.type === workout.type && h.date === dateStr);
+      if (!wasSkipped && !alreadyDone) {
+        const diff = Math.floor((d - fromDate) / 86400000);
+        let whenLabel = diff === 1 ? 'Zítra' : d.toLocaleDateString('cs-CZ',{weekday:'long'});
+        results.push({ ...workout, dateStr, whenLabel });
+      }
     }
     d.setDate(d.getDate() + 1);
   }
@@ -777,10 +785,7 @@ function dropWorkoutToToday(type, todayDateStr, originalDate) {
         <div class="today-title">${type}</div>
         <div class="today-meta">${dateStr}</div>
         <div class="today-meta" style="margin-top:4px">Naposledy: <strong>${lastDate}</strong> &nbsp;|&nbsp; ${EXERCISES[type].length} cviků</div>
-        <button class="start-btn" onclick="startSession('${type}','${todayDateStr}')">▶ SPUSTIT TRÉNINK</button>
-      </div>`;
-
-    const dz = document.getElementById('dropZone');
+        <button class="start-btn" onclick="startSession('${type}','${todayDateStr}','${originalDate}')">▶ SPUSTIT TRÉNINK</button>
     if (dz) dz.outerHTML = heroHtml;
 
     // Remove ONLY the specific dragged card – match by type AND original date
@@ -804,9 +809,10 @@ function dropWorkoutToToday(type, todayDateStr, originalDate) {
 // ============================================================
 let currentSession = null;
 
-function startSession(type, dateStr) {
+function startSession(type, dateStr, movedFromDate) {
   currentSession = {
     type, dateStr,
+    movedFromDate: movedFromDate || null,
     exercises: EXERCISES[type].map(name => ({ name, sets: [{ reps:'', weight:'' }], done: false, open: false }))
   };
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -887,12 +893,26 @@ function markDone(exIdx) {
 function finishSession() {
   const anyData = currentSession.exercises.some(e => e.sets.some(s => s.weight || s.reps));
   if (!anyData) { showToast('Zadej alespoň pár hodnot!'); return; }
+
+  // Always use today's actual date when saving
+  const actualToday = new Date();
+  actualToday.setHours(0,0,0,0);
+  const actualDateStr = getDateStr(actualToday);
+
   history.push({
-    date: currentSession.dateStr,
+    date: actualDateStr,
     type: currentSession.type,
     exercises: currentSession.exercises.map(e => ({ name: e.name, sets: e.sets }))
   });
   saveData('gymlog_history', history);
+
+  // If this was a moved/dragged workout, mark its original date as done so it won't reappear
+  if (currentSession.movedFromDate) {
+    let skipped = loadData('gymlog_skipped', []);
+    skipped.push({ type: currentSession.type, date: currentSession.movedFromDate });
+    saveData('gymlog_skipped', skipped);
+  }
+
   showToast('Trénink uložen! 💪');
   backToToday();
 }
