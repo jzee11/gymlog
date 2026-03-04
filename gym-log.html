@@ -207,6 +207,23 @@ function dateStr(d){
 
 function todayDate(){var d=new Date();d.setHours(0,0,0,0);return d;}
 
+function wasAlreadyDoneThisCycle(type, scheduledDateStr) {
+  // Find the most recent workout of this type
+  var sameType = gymHistory.filter(function(h){ return h.type === type; });
+  if (!sameType.length) return false;
+  sameType.sort(function(a,b){ return b.date.localeCompare(a.date); });
+  var lastDone = sameType[0];
+
+  // Check if any OTHER type was done AFTER this workout
+  // If yes → cycle moved on → this type is due again
+  var otherAfter = gymHistory.some(function(h){
+    return h.type !== type && h.date > lastDone.date && h.date <= scheduledDateStr;
+  });
+
+  // If no other type was done after last time → still "fresh", skip it
+  return !otherAfter;
+}
+
 function getTodayInfo(){
   var today=todayDate();
   var start=new Date(cycleStart);
@@ -218,6 +235,10 @@ function getTodayInfo(){
     var c=CYCLE[i];
     if(weekNum===0&&c.day<4&&c.dow===dow){workout=c;break;}
     if(weekNum===1&&c.day>=4&&c.dow===dow){workout=c;break;}
+  }
+  // Hide today's workout if it was already done recently (moved to another day)
+  if(workout && wasAlreadyDoneThisCycle(workout.type, dateStr(today))) {
+    workout = null;
   }
   return{today:today,weekNum:weekNum,workout:workout};
 }
