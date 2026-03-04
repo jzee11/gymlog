@@ -208,20 +208,13 @@ function dateStr(d){
 function todayDate(){var d=new Date();d.setHours(0,0,0,0);return d;}
 
 function wasAlreadyDoneThisCycle(type, scheduledDateStr) {
-  // Find the most recent workout of this type
-  var sameType = gymHistory.filter(function(h){ return h.type === type; });
-  if (!sameType.length) return false;
-  sameType.sort(function(a,b){ return b.date.localeCompare(a.date); });
-  var lastDone = sameType[0];
-
-  // Check if any OTHER type was done AFTER this workout
-  // If yes → cycle moved on → this type is due again
-  var otherAfter = gymHistory.some(function(h){
-    return h.type !== type && h.date > lastDone.date && h.date <= scheduledDateStr;
+  var scheduledD = new Date(scheduledDateStr + 'T12:00:00');
+  return gymHistory.some(function(h) {
+    if (h.type !== type) return false;
+    var hd = new Date(h.date + 'T12:00:00');
+    var diff = (scheduledD - hd) / 86400000;
+    return diff >= 0 && diff <= 4;
   });
-
-  // If no other type was done after last time → still "fresh", skip it
-  return !otherAfter;
 }
 
 function getTodayInfo(){
@@ -346,14 +339,7 @@ function getUpcoming(fromDate,count){
     if(workout){
       var ds=dateStr(d);
       var wasSkipped=skipped.some(function(s){return s.type===workout.type&&s.date===ds;});
-      // Hide if this exact scheduled slot was already covered (done within 3 days before/after)
-      var scheduledD=new Date(ds+'T12:00:00');
-      var alreadyDone=gymHistory.some(function(h){
-        if(h.type!==workout.type)return false;
-        var hd=new Date(h.date+'T12:00:00');
-        var diff=Math.abs((scheduledD-hd)/86400000);
-        return diff<=3;
-      });
+      var alreadyDone=wasAlreadyDoneThisCycle(workout.type, ds);
       if(!wasSkipped&&!alreadyDone){
         var diff=Math.floor((d-fromDate)/86400000);
         var whenLabel=diff===1?'Zítra':d.toLocaleDateString('cs-CZ',{weekday:'long'});
