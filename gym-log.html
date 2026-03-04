@@ -346,7 +346,14 @@ function getUpcoming(fromDate,count){
     if(workout){
       var ds=dateStr(d);
       var wasSkipped=skipped.some(function(s){return s.type===workout.type&&s.date===ds;});
-      var alreadyDone=gymHistory.some(function(h){return h.type===workout.type&&h.date===ds;});
+      // Hide if this exact scheduled slot was already covered (done within 3 days before/after)
+      var scheduledD=new Date(ds+'T12:00:00');
+      var alreadyDone=gymHistory.some(function(h){
+        if(h.type!==workout.type)return false;
+        var hd=new Date(h.date+'T12:00:00');
+        var diff=Math.abs((scheduledD-hd)/86400000);
+        return diff<=3;
+      });
       if(!wasSkipped&&!alreadyDone){
         var diff=Math.floor((d-fromDate)/86400000);
         var whenLabel=diff===1?'Zítra':d.toLocaleDateString('cs-CZ',{weekday:'long'});
