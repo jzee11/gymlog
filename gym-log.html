@@ -84,7 +84,8 @@ h1,h2,h3{font-family:'Bebas Neue',sans-serif;letter-spacing:.05em;}
 .history-list{display:flex;flex-direction:column;gap:12px;padding:8px 0;}
 .hist-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden;}
 .hist-header{padding:14px 16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;}
-.hist-type{font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--accent);}
+.hist-type{margin-bottom:2px;}
+.hist-type .type-badge{font-size:15px;padding:5px 14px;border-radius:10px;font-family:'Bebas Neue',sans-serif;letter-spacing:1px;}
 .hist-date{font-size:12px;color:var(--muted);}
 .hist-badge{font-size:12px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:3px 10px;color:var(--muted);}
 .hist-body{display:none;padding:0 16px 14px;}
@@ -168,8 +169,8 @@ h1,h2,h3{font-family:'Bebas Neue',sans-serif;letter-spacing:.05em;}
 <div class="toast" id="toast"></div>
 <script>
 var EXERCISES = {
-  LEGS: ['Dřep','Legpress','Zakopávání v leže','Zakopávání v sedě','Výpony na lýtka','Pallofpress'],
-  PUSH: ['Incline benchpress','Tlaky s jednoručkami v sedě','Kliky na bradlech','Upažování s jednoručkami','Tricepsové stahování kladky','Cable crunches'],
+  LEGS: ['Dřep','Legpress','Zakopávání v leže','Hyperextenze','Výpony na lýtka','Pallofpress'],
+  PUSH: ['Bench Press','Tlaky s jednoručkami v sedě','Kliky na bradlech','Upažování s jednoručkami','Tricepsové stahování kladky','Cable crunches'],
   PULL: ['Shyby','Chest supported row','Pullover','Facepulls','Barbell curl','Mrtvý tah','Hanging knee raises']
 };
 var CYCLE = [
@@ -573,7 +574,7 @@ function renderHistory(){
     }).join('');
     return '<div class="hist-card" id="hist-'+si+'">'
       +'<div class="hist-header" onclick="toggleHist('+si+')">'
-      +'<div><div class="hist-type">'+h.type+'</div><div class="hist-date">'+dateLabel+'</div></div>'
+      +'<div><div class="hist-type">'+typeBadge(h.type)+'</div><div class="hist-date">'+dateLabel+'</div></div>'
       +'<div class="hist-badge">'+h.exercises.length+' cviků</div>'
       +'</div>'
       +'<div class="hist-body">'+exRows
