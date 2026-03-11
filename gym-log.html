@@ -291,28 +291,28 @@ function renderToday(){
   var todayDone=doneToday[0]||null;
 
   if(todayDone){
-    html+='<div class="today-hero" style="border-color:rgba(200,241,53,.3)">'\
-      +'<div class="today-label" style="color:var(--accent)">✓ Dnes odcvičeno</div>'\
-      +'<div class="today-title">'+todayDone.type+'</div>'\
-      +'<div class="today-meta">'+ds+'</div>'\
-      +'<div class="today-meta" style="margin-top:4px;color:var(--accent)">💪 Skvělá práce!</div>'\
+    html+='<div class="today-hero" style="border-color:rgba(200,241,53,.3)">'
+      +'<div class="today-label" style="color:var(--accent)">✓ Dnes odcvičeno</div>'
+      +'<div class="today-title">'+todayDone.type+'</div>'
+      +'<div class="today-meta">'+ds+'</div>'
+      +'<div class="today-meta" style="margin-top:4px;color:var(--accent)">💪 Skvělá práce!</div>'
       +'</div>';
   } else if(workout){
     var last=getLastWorkout(workout.type);
     var lastDate=last?new Date(last.date+'T12:00:00').toLocaleDateString('cs-CZ',{day:'numeric',month:'short'}):'Poprvé!';
-    html+='<div class="today-hero">'\
-      +'<div class="today-label">Dnešní trénink</div>'\
-      +'<div class="today-title">'+workout.type+'</div>'\
-      +'<div class="today-meta">'+ds+'</div>'\
-      +'<div class="today-meta" style="margin-top:4px">Naposledy: <strong>'+lastDate+'</strong> &nbsp;|&nbsp; '+EXERCISES[workout.type].length+' cviků</div>'\
-      +'<button class="start-btn" onclick="startSession(\''+workout.type+'\',null)">▶ SPUSTIT TRÉNINK</button>'\
+    html+='<div class="today-hero">'
+      +'<div class="today-label">Dnešní trénink</div>'
+      +'<div class="today-title">'+workout.type+'</div>'
+      +'<div class="today-meta">'+ds+'</div>'
+      +'<div class="today-meta" style="margin-top:4px">Naposledy: <strong>'+lastDate+'</strong> &nbsp;|&nbsp; '+EXERCISES[workout.type].length+' cviků</div>'
+      +'<button class="start-btn" onclick="startSession(\''+workout.type+'\',null)">▶ SPUSTIT TRÉNINK</button>'
       +'</div>';
   } else {
-    html+='<div class="drop-zone" id="dropZone">'\
-      +'<div class="rest-emoji">😴</div>'\
-      +'<h2 style="font-size:32px;color:var(--muted);margin-bottom:4px">DEN ODPOČINKU</h2>'\
-      +'<p style="font-size:14px;color:var(--muted)">'+ds+'</p>'\
-      +'<div class="drop-hint">⬆ Přetáhni trénink sem pro cvičení dnes</div>'\
+    html+='<div class="drop-zone" id="dropZone">'
+      +'<div class="rest-emoji">😴</div>'
+      +'<h2 style="font-size:32px;color:var(--muted);margin-bottom:4px">DEN ODPOČINKU</h2>'
+      +'<p style="font-size:14px;color:var(--muted)">'+ds+'</p>'
+      +'<div class="drop-hint">⬆ Přetáhni trénink sem pro cvičení dnes</div>'
       +'</div>';
   }
 
@@ -607,9 +607,9 @@ function renderHistory(){
       var best=e.sets&&e.sets.length?e.sets.reduce(function(a,b){return(parseFloat(b.weight)||0)>(parseFloat(a.weight)||0)?b:a;},e.sets[0]):null;
       var stat=best&&(best.weight||best.reps)?'<strong>'+(best.weight||'?')+'kg</strong> × '+(best.reps||'?'):'—';
       var noteHtml=e.note?'<div class="hist-note">📝 '+escHtml(e.note)+'</div>':'';
-      return '<div class="hist-ex-row" style="flex-direction:column;align-items:flex-start;gap:2px">'\
-        +'<div style="display:flex;justify-content:space-between;width:100%"><span>'+escHtml(e.name)+'</span><span class="hist-ex-stats">'+stat+'</span></div>'\
-        +noteHtml\
+      return '<div class="hist-ex-row" style="flex-direction:column;align-items:flex-start;gap:2px">'
+        +'<div style="display:flex;justify-content:space-between;width:100%"><span>'+escHtml(e.name)+'</span><span class="hist-ex-stats">'+stat+'</span></div>'
+        +noteHtml
         +'</div>';
     }).join('');
     return '<div class="hist-card" id="hist-'+si+'">'
