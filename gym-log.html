@@ -142,7 +142,12 @@ h1,h2,h3{font-family:'Bebas Neue',sans-serif;letter-spacing:.05em;}
 .nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:10px;font-weight:500;cursor:pointer;padding:8px 4px;border-radius:12px;transition:all .2s;}
 .nav-btn.active{color:var(--accent);background:rgba(200,241,53,.08);}
 .nav-icon{font-size:22px;}
-.empty-state{text-align:center;padding:40px 20px;color:var(--muted);}
+.note-area{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;padding:9px 12px;resize:none;outline:none;margin-bottom:10px;min-height:56px;line-height:1.5;}
+.note-area:focus{border-color:var(--accent);}
+.note-area::placeholder{color:var(--muted);}
+.last-note{background:rgba(123,97,255,.08);border:1px solid rgba(123,97,255,.2);border-radius:10px;padding:8px 12px;margin-bottom:10px;font-size:12px;color:var(--accent2);line-height:1.5;}
+.last-note-label{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:3px;}
+.hist-note{background:rgba(200,241,53,.06);border:1px solid rgba(200,241,53,.15);border-radius:8px;padding:7px 10px;margin-top:4px;font-size:12px;color:var(--accent);line-height:1.5;font-style:italic;}
 .empty-state .emoji{font-size:48px;margin-bottom:12px;}
 @keyframes fadeIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
 </style>
@@ -277,24 +282,37 @@ function renderToday(){
   var workout=info.workout;
   document.getElementById('weekBadge').textContent=weekNum===0?'Dlouhý týden':'Krátký týden';
   var ds=today.toLocaleDateString('cs-CZ',{weekday:'long',day:'numeric',month:'long'});
+  var todayStr=dateStr(today);
   var html='';
 
-  if(workout){
+  // Check if any workout was done today
+  var doneToday=gymHistory.filter(function(h){return h.date===todayStr;});
+  doneToday.sort(function(a,b){return b.date.localeCompare(a.date);});
+  var todayDone=doneToday[0]||null;
+
+  if(todayDone){
+    html+='<div class="today-hero" style="border-color:rgba(200,241,53,.3)">'\
+      +'<div class="today-label" style="color:var(--accent)">✓ Dnes odcvičeno</div>'\
+      +'<div class="today-title">'+todayDone.type+'</div>'\
+      +'<div class="today-meta">'+ds+'</div>'\
+      +'<div class="today-meta" style="margin-top:4px;color:var(--accent)">💪 Skvělá práce!</div>'\
+      +'</div>';
+  } else if(workout){
     var last=getLastWorkout(workout.type);
     var lastDate=last?new Date(last.date+'T12:00:00').toLocaleDateString('cs-CZ',{day:'numeric',month:'short'}):'Poprvé!';
-    html+='<div class="today-hero">'
-      +'<div class="today-label">Dnešní trénink</div>'
-      +'<div class="today-title">'+workout.type+'</div>'
-      +'<div class="today-meta">'+ds+'</div>'
-      +'<div class="today-meta" style="margin-top:4px">Naposledy: <strong>'+lastDate+'</strong> &nbsp;|&nbsp; '+EXERCISES[workout.type].length+' cviků</div>'
-      +'<button class="start-btn" onclick="startSession(\''+workout.type+'\',null)">▶ SPUSTIT TRÉNINK</button>'
+    html+='<div class="today-hero">'\
+      +'<div class="today-label">Dnešní trénink</div>'\
+      +'<div class="today-title">'+workout.type+'</div>'\
+      +'<div class="today-meta">'+ds+'</div>'\
+      +'<div class="today-meta" style="margin-top:4px">Naposledy: <strong>'+lastDate+'</strong> &nbsp;|&nbsp; '+EXERCISES[workout.type].length+' cviků</div>'\
+      +'<button class="start-btn" onclick="startSession(\''+workout.type+'\',null)">▶ SPUSTIT TRÉNINK</button>'\
       +'</div>';
   } else {
-    html+='<div class="drop-zone" id="dropZone">'
-      +'<div class="rest-emoji">😴</div>'
-      +'<h2 style="font-size:32px;color:var(--muted);margin-bottom:4px">DEN ODPOČINKU</h2>'
-      +'<p style="font-size:14px;color:var(--muted)">'+ds+'</p>'
-      +'<div class="drop-hint">⬆ Přetáhni trénink sem pro cvičení dnes</div>'
+    html+='<div class="drop-zone" id="dropZone">'\
+      +'<div class="rest-emoji">😴</div>'\
+      +'<h2 style="font-size:32px;color:var(--muted);margin-bottom:4px">DEN ODPOČINKU</h2>'\
+      +'<p style="font-size:14px;color:var(--muted)">'+ds+'</p>'\
+      +'<div class="drop-hint">⬆ Přetáhni trénink sem pro cvičení dnes</div>'\
       +'</div>';
   }
 
@@ -463,7 +481,7 @@ function startSession(type,movedFromDate){
     type:type,
     dateStr:dateStr(today),
     movedFromDate:movedFromDate||null,
-    exercises:EXERCISES[type].map(function(name){return{name:name,sets:[{reps:'',weight:''}],done:false,open:false};})
+    exercises:EXERCISES[type].map(function(name){return{name:name,sets:[{reps:'',weight:''}],note:'',done:false,open:false};})
   };
   document.querySelectorAll('.nav-btn').forEach(function(b){b.classList.remove('active');});
   document.querySelectorAll('.view').forEach(function(v){v.classList.remove('active');});
@@ -505,7 +523,14 @@ function renderSession(){
         +'</tr>';
     });
     html+='</tbody></table>'
-      +'<button class="add-set-btn" onclick="addSet('+idx+')">+ Přidat sérii</button>'
+      +'<button class="add-set-btn" onclick="addSet('+idx+')">+ Přidat sérii</button>';
+    // Last note from previous workout
+    var lastNote=getLastNote(type,ex.name);
+    if(lastNote){
+      html+='<div class="last-note"><div class="last-note-label">📝 Poznámka z minula</div>'+escHtml(lastNote)+'</div>';
+    }
+    // Note textarea
+    html+='<textarea class="note-area" placeholder="Poznámka ke cviku (technika, pocit...)" oninput="updateNote('+idx+',this.value)">'+escHtml(ex.note||'')+'</textarea>'
       +'<button class="done-btn" onclick="markDone('+idx+')">'+(ex.done?'✓ HOTOVO':'OZNAČIT JAKO HOTOVÉ')+'</button>'
       +'</div></div>';
   });
@@ -522,6 +547,17 @@ function toggleEx(idx){
   },50);
 }
 function updateSet(ei,si,f,v){currentSession.exercises[ei].sets[si][f]=v;}
+function updateNote(ei,v){currentSession.exercises[ei].note=v;}
+function escHtml(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function getLastNote(type,exName){
+  var filtered=gymHistory.filter(function(h){return h.type===type;});
+  filtered.sort(function(a,b){return b.date.localeCompare(a.date);});
+  for(var i=0;i<filtered.length;i++){
+    var ex=filtered[i].exercises.find(function(e){return e.name===exName;});
+    if(ex&&ex.note)return ex.note;
+  }
+  return null;
+}
 function addSet(ei){
   currentSession.exercises[ei].sets.push({reps:'',weight:''});
   currentSession.exercises[ei].open=true;
@@ -537,7 +573,7 @@ function finishSession(){
   if(!anyData){showToast('Zadej alespoň pár hodnot!');return;}
   // Always save with TODAY's actual date
   var todayStr=dateStr(todayDate());
-  gymHistory.push({date:todayStr,type:currentSession.type,exercises:currentSession.exercises.map(function(e){return{name:e.name,sets:e.sets};})});
+  gymHistory.push({date:todayStr,type:currentSession.type,exercises:currentSession.exercises.map(function(e){return{name:e.name,sets:e.sets,note:e.note||''};})});
   save('gymlog_history',gymHistory);
   // Mark original date as skipped so it won't reappear in upcoming
   if(currentSession.movedFromDate){
@@ -570,7 +606,11 @@ function renderHistory(){
     var exRows=h.exercises.map(function(e){
       var best=e.sets&&e.sets.length?e.sets.reduce(function(a,b){return(parseFloat(b.weight)||0)>(parseFloat(a.weight)||0)?b:a;},e.sets[0]):null;
       var stat=best&&(best.weight||best.reps)?'<strong>'+(best.weight||'?')+'kg</strong> × '+(best.reps||'?'):'—';
-      return '<div class="hist-ex-row"><span>'+e.name+'</span><span class="hist-ex-stats">'+stat+'</span></div>';
+      var noteHtml=e.note?'<div class="hist-note">📝 '+escHtml(e.note)+'</div>':'';
+      return '<div class="hist-ex-row" style="flex-direction:column;align-items:flex-start;gap:2px">'\
+        +'<div style="display:flex;justify-content:space-between;width:100%"><span>'+escHtml(e.name)+'</span><span class="hist-ex-stats">'+stat+'</span></div>'\
+        +noteHtml\
+        +'</div>';
     }).join('');
     return '<div class="hist-card" id="hist-'+si+'">'
       +'<div class="hist-header" onclick="toggleHist('+si+')">'
@@ -603,7 +643,10 @@ function renderEdit(){
         +'<button class="modal-del-set" onclick="rms('+ei+','+si+')">×</button>'
         +'</div>';
     }).join('');
-    return '<div class="modal-ex"><div class="modal-ex-name">'+ex.name+'</div>'+setsHtml+'<button class="modal-add-set" onclick="ams('+ei+')">+ série</button></div>';
+    return '<div class="modal-ex"><div class="modal-ex-name">'+escHtml(ex.name)+'</div>'+setsHtml
+      +'<button class="modal-add-set" onclick="ams('+ei+')">+ série</button>'
+      +'<textarea class="note-area" style="margin-top:8px" placeholder="Poznámka..." oninput="uen('+ei+',this.value)">'+escHtml(ex.note||'')+'</textarea>'
+      +'</div>';
   }).join('');
   var html='<div class="modal-overlay" id="editOverlay" onclick="closeEdit(event)">'
     +'<div class="modal" onclick="event.stopPropagation()">'
@@ -618,6 +661,7 @@ function renderEdit(){
   var d=document.createElement('div');d.id='editModal';d.innerHTML=html;document.body.appendChild(d);
 }
 function ues(ei,si,f,v){editData.exercises[ei].sets[si][f]=v;}
+function uen(ei,v){editData.exercises[ei].note=v;}
 function ams(ei){editData.exercises[ei].sets.push({weight:'',reps:''});renderEdit();}
 function rms(ei,si){if(editData.exercises[ei].sets.length<=1)return;editData.exercises[ei].sets.splice(si,1);renderEdit();}
 function saveEdit(){gymHistory[editIdx]=editData;save('gymlog_history',gymHistory);closeEdit();renderHistory();showToast('Trénink upraven! ✅');}
