@@ -174,8 +174,8 @@ h1,h2,h3{font-family:'Bebas Neue',sans-serif;letter-spacing:.05em;}
 <div class="toast" id="toast"></div>
 <script>
 var EXERCISES = {
-  LEGS: ['Předkopávání','Dřep','Legpress','Zakopávání v leže','Hyperextenze','Výpony na lýtka','Spor s činkou'],
-  PUSH: ['Bench Press','Tlaky s jednoručkami v sedě','Kliky na bradlech','Upažování s jednoručkami','Tricepsové stahování kladky','Sit ups'],
+  LEGS: ['Předkopávání','Dřep','Legpress','Zakopávání v leže','Hyperextenze','Výpony na lýtka','Pallof press'],
+  PUSH: ['Tlaky','Military press','Kliky na bradlech','Upažování s jednoručkami','Sit ups','Assault bike'],
   PULL: ['Shyby','Chest supported row','Pullover','Revers pec deck','Barbell curl','Mrtvý tah','Hanging knee raises']
 };
 var CYCLE = [
@@ -306,6 +306,9 @@ function renderToday(){
       +'<div class="today-meta">'+ds+'</div>'
       +'<div class="today-meta" style="margin-top:4px">Naposledy: <strong>'+lastDate+'</strong> &nbsp;|&nbsp; '+EXERCISES[workout.type].length+' cviků</div>'
       +'<button class="start-btn" onclick="startSession(\''+workout.type+'\',null)">▶ SPUSTIT TRÉNINK</button>'
+      +'</div>'
+      +'<div class="drop-zone" id="dropZone" style="padding:14px 20px;margin-bottom:20px">'
+      +'<div class="drop-hint" style="margin:0">⬆ Přetáhni jiný trénink sem pro výměnu</div>'
       +'</div>';
   } else {
     html+='<div class="drop-zone" id="dropZone">'
@@ -324,7 +327,7 @@ function renderToday(){
       +'<div class="ndc-top" onclick="toggleNdc('+idx+')">'
       +'<div class="ndc-left"><div class="ndc-when">'+u.whenLabel+'</div><div class="ndc-name">'+u.label+' — '+u.type+'</div></div>'
       +'<div class="ndc-right">'+typeBadge(u.type)+'<span class="arrow">▼</span>'
-      +(!workout?'<span class="drag-handle" id="dh-'+idx+'">⠿</span>':'')
+      +'<span class="drag-handle" id="dh-'+idx+'">⠿</span>'
       +'</div></div>'
       +'<div class="ndc-exlist">'+exItems+'</div>'
       +'</div>';
@@ -332,7 +335,7 @@ function renderToday(){
   html+='</div>';
 
   document.getElementById('todayContent').innerHTML=html;
-  if(!workout)setupDrag(today);
+  setupDrag(today);
 }
 
 function toggleNdc(idx){
@@ -447,7 +450,6 @@ function doDropToToday(type,origDate,today){
     var last=getLastWorkout(type);
     var lastDate=last?new Date(last.date+'T12:00:00').toLocaleDateString('cs-CZ',{day:'numeric',month:'short'}):'Poprvé!';
     var ds2=today.toLocaleDateString('cs-CZ',{weekday:'long',day:'numeric',month:'long'});
-    var todayStr=dateStr(today);
     var heroHtml='<div class="today-hero" style="animation:fadeIn .3s ease">'
       +'<div class="today-label">Dnešní trénink <span style="font-size:11px;background:rgba(200,241,53,.15);border-radius:6px;padding:2px 8px;margin-left:6px;color:var(--accent)">Přesunuto</span></div>'
       +'<div class="today-title">'+type+'</div>'
@@ -455,8 +457,17 @@ function doDropToToday(type,origDate,today){
       +'<div class="today-meta" style="margin-top:4px">Naposledy: <strong>'+lastDate+'</strong> &nbsp;|&nbsp; '+EXERCISES[type].length+' cviků</div>'
       +'<button class="start-btn" onclick="startSession(\''+type+'\',\''+origDate+'\')">▶ SPUSTIT TRÉNINK</button>'
       +'</div>';
+    // Replace existing hero if present, otherwise replace dropzone
+    var existingHero=document.querySelector('.today-hero');
     var dz2=document.getElementById('dropZone');
-    if(dz2)dz2.outerHTML=heroHtml;
+    if(existingHero){
+      existingHero.outerHTML=heroHtml;
+      // Also remove the drop zone that was below it
+      var dz3=document.getElementById('dropZone');
+      if(dz3)dz3.remove();
+    } else if(dz2){
+      dz2.outerHTML=heroHtml;
+    }
     // Remove the specific card that was dragged
     var removed=false;
     document.querySelectorAll('.ndc').forEach(function(card){
